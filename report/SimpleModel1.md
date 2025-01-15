@@ -8,9 +8,11 @@ $$
 This is essentially unwrapping each utterance into a sequence of words, and flattening them.
 
 After I rearrange the data into: 
+
 $$
 D_2 = [word, word, \cdots]
 $$
+
 We just extend the list of words.
 
 ## The model:

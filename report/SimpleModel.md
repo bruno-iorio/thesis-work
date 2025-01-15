@@ -1,6 +1,7 @@
 # SimpleModel.ipynb
 
 ## preprocessing:
+
 $$
 D_1 = [[utt, utt,\cdots], [utt, utt, \cdots], \cdots] \longrightarrow [[word,word, \cdots], [word, word, \cdots],\cdots] 
 $$
@@ -8,6 +9,7 @@ $$
 This is essentially unwrapping each utterance into a sequence of words, and flattening them.
 
 After I rearrange the data into: 
+
 $$
 D_2 = [[[word_{1,1},word_{1,2},\cdots], [word_{2,1},\cdots],\cdots]]
 $$
