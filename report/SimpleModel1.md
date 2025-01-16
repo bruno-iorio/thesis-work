@@ -15,29 +15,42 @@ $$
 
 We just extend the list of words.
 
+
+At the end we have the following: 
+
+$$
+D_2 = [word_1, word_2, word_3, \cdots, word_{n-1}] \\
+D_3 = [emo_1, emo_2, emo_3, \cdots , emo_{n-1}] \\
+$$
+
+And we have our targets:
+
+$$
+D_3 = [word_2, word_3, word_4,\cdots, word_{n}] \\
+D_4 = [emo_2, emo_3, emo_4, \cdots , emo_{n}] \\
+$$
+
+In this case we use context = 1: we only use word_k and emo_k to predict
+word_{k+1} and emo_{k+1}.
+
 ## The model:
 As it stands right now, It is just a NN model with no weight updating (yet). Just to test and fix the 
 bad complexity, and preprocessing of SimpleModel (the previous one)
 
+## Loss:
+           -   precision    recall  f1-score   support
+           1       0.89      0.96      0.93     82011
+           2       0.00      0.00      0.00      1083
+           3       0.00      0.00      0.00        41
+           4       0.00      0.00      0.00       126
+           5       0.90      0.00      0.01      6231
+           6       0.00      0.00      0.00      1085
+           7       0.00      0.00      0.00      1033
+     accuracy        -         -       0.86     91610
+     macro avg     0.26      0.14      0.13     91610
+     weighted avg  0.86      0.86      0.83     91610
+
 ## Issues:
 - Too simple 
 - preprocessing requires refinement
-
-
-
-              precision    recall  f1-score   support
-
-           0       0.77      0.24      0.36     82011
-           1       0.92      0.80      0.85      1083
-           2       0.00      0.07      0.00        41
-           3       0.24      0.55      0.33       126
-           4       0.00      0.00      0.00      6231
-           5       0.93      0.75      0.83      1085
-           6       0.90      0.90      0.90      1033
-
-    accuracy                           0.24     91610
-   macro avg       0.54      0.47      0.47     91610
-weighted avg       0.72      0.24      0.36     91610
-
-
 
