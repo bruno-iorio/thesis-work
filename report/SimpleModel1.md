@@ -1,5 +1,8 @@
 # SimpleModel1.ipynb
 
+## Data:
+ - Daily Dialog
+
 ## preprocessing:
 $$
 D_1 = [[utt, utt,\cdots], [utt, utt, \cdots], \cdots] \longrightarrow [[word,word, \cdots], [word, word, \cdots],\cdots] 

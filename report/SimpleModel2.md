@@ -1,4 +1,8 @@
 # SimpleModel2.ipynb
+## Data: 
+
+ - Daily Dialog
+
 ## preprocessing:
 
 $$
