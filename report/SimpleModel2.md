@@ -73,7 +73,7 @@ With only emotion loss:
 
 ## hyperparameters: 
 ### Combining text and emotions loss:
- - epochs = 3
+ - epochs = 3 / batch_size = 5 (TODO: To test with other hyperparameters)
  - 16M trainable parameters
  - 316M parameters
 
