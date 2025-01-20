@@ -34,7 +34,7 @@ roughly 1,000,000.
 
 Combining with the text loss:  
 
-              precision    recall  f1-score   support
+                  precision    recall  f1-score   support
 
     (padding)0       0.13      1.00      0.23      2553
              1       1.00      0.35      0.52     42974
@@ -49,10 +49,34 @@ Combining with the text loss:
           macro avg  0.26      0.21      0.13     50000
        weighted avg  0.90      0.36      0.47     50000
 
+With only emotion loss: 
+
+                  precision    recall  f1-score   support
+
+    (padding)0       0.27      1.00      0.42      2553
+             1       1.00      0.66      0.79     42974
+             2       0.95      0.99      0.97       554
+             3       0.02      1.00      0.05        10
+             4       0.31      1.00      0.47        67
+             5       0.28      0.99      0.43      2433
+             6       0.93      1.00      0.96       758
+             7       0.50      1.00      0.67       651
+
+          accuracy     -        -        0.71     50000
+         macro avg   0.53      0.95      0.59     50000
+      weighted avg   0.92      0.71      0.76     50000
+
+
 ## hyperparameters: 
+### Combining text and emotions loss:
  - epochs = 3
  - 16M trainable parameters
  - 316M parameters
+
+### Only emotion loss
+ - epochs = 8
+ - < 100K trainable parameters (gradient update doesn't flow throught the text output channel)
+ - 316M parameters  
 
 
 ## Issues: 
