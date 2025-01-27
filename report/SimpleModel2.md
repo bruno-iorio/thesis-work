@@ -87,3 +87,22 @@ With only emotion loss:
 - preprocessing requires refinement (as always)
 - adding the loss for the text token actually slows down the training (impossible to train in the cpu)
 
+
+
+# Diagnose of problems:
+ 
+  The main issue of this model might be its simplicity. In fact, such a simple model is not enough to describe all the components we need.
+
+The model incurs in the mistake of consistently over-fitting whenever it can:
+ 1) It over-fits the emotion prediction;
+ 2) It over-fits the word prediction (chooses always "<unk>" token or "," token which are very common)
+
+Why the model does it:
+ 1) We can easily justify it for the emotions, because the model just learns when to change the emotions i.e. whenever it sees a "<sep>" token, it understands it is time to change the emotion, which is literally not the kind of behaviour we are looking for 
+ 2) For the words it gets slightly more complicated, but this might be an issue related to the loss. I presume it must be due to the fact that the model can only find an easy local minimum in the optimization process, which is just choosing the most frequent tokens, instead of learning how to predict properly the next token;
+
+# What I tried and did not work:
+
+I tried giving more priority to the loss of the words, instead of the emotions. I also tried making the prediction of the emotion more dependent on the word prediction; Both of these approaches reduced the over-fitting for the emotion prediction, but increased significantly the over-fitting for the word prediction.
+
+Consequently, we couldn't have a decent strategy for this task using this simple model;
