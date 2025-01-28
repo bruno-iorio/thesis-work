@@ -1,4 +1,4 @@
-# SimpleModel2.ipynb
+# Linear_model.ipynb
 ## Data: 
 
  - Daily Dialog
@@ -36,57 +36,20 @@ roughly 1,000,000.
 
 ## Metrics: 
 
-Combining with the text loss:  
+           -   precision    recall  f1-score   support
 
-                  precision    recall  f1-score   support
+           0       0.24      0.73      0.36      3735
+           1       0.23      0.19      0.21      2403
+           2       0.00      0.00      0.00      3587
+           3       0.15      0.11      0.13      2003
+           4       0.34      0.27      0.30      2300
+           5       0.03      0.01      0.02      1273
+           6       0.37      0.26      0.30      2053
+           7       0.00      0.00      0.00      1245
 
-    (padding)0       0.13      1.00      0.23      2553
-             1       1.00      0.35      0.52     42974
-             2       0.07      0.17      0.10       554
-             3       0.00      0.00      0.00        10
-             4       0.00      0.00      0.00        67
-             5       0.75      0.08      0.14      2433
-             6       0.11      0.06      0.08       758
-             7       0.00      0.00      0.00       651
-
-          accuracy     -         -       0.36     50000
-          macro avg  0.26      0.21      0.13     50000
-       weighted avg  0.90      0.36      0.47     50000
-
-With only emotion loss: 
-
-                  precision    recall  f1-score   support
-
-    (padding)0       0.27      1.00      0.42      2553
-             1       1.00      0.66      0.79     42974
-             2       0.95      0.99      0.97       554
-             3       0.02      1.00      0.05        10
-             4       0.31      1.00      0.47        67
-             5       0.28      0.99      0.43      2433
-             6       0.93      1.00      0.96       758
-             7       0.50      1.00      0.67       651
-
-          accuracy     -        -        0.71     50000
-         macro avg   0.53      0.95      0.59     50000
-      weighted avg   0.92      0.71      0.76     50000
-
-
-## hyperparameters: 
-### Combining text and emotions loss:
- - epochs = 3 / batch_size = 5 (TODO: To test with other hyperparameters)
- - 16M trainable parameters
- - 316M parameters
-
-### Only emotion loss
- - epochs = 8
- - < 100K trainable parameters (gradient update doesn't flow throught the text output channel)
- - 316M parameters  
-
-
-## Issues: 
-- preprocessing requires refinement (as always)
-- adding the loss for the text token actually slows down the training (impossible to train in the cpu)
-
+        accuracy     -        -        0.25     18599
+       macro avg   0.17      0.20      0.16     18599
+    weighted avg   0.18      0.25      0.19     18599
 
 
 # Diagnose of problems:
