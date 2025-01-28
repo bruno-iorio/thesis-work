@@ -1,7 +1,7 @@
 # Linear_model.ipynb
 ## Data: 
 
- - Daily Dialog
+ - EmoryNLP
 
 ## preprocessing:
 
