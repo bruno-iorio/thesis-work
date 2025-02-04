@@ -34,7 +34,7 @@ def emory():
     print("Creating dataloaders")
     ## Create dataloader
     
-    batch_size = 1
+    batch_size = 1 ## cannot increase batch size for now... needs some kind of padding... I think...
     train_loader_emory = DataLoader(train_data_emory, batch_size=batch_size,shuffle = True)
     test_loader_emory = DataLoader(test_data_emory, batch_size=batch_size,shuffle = True)
     val_loader_emory = DataLoader(val_data_emory, batch_size=batch_size, shuffle = True)
