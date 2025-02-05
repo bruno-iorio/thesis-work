@@ -14,7 +14,7 @@ from include.include_preprocess import *
 
 def get_encoder():
     ## simple to get the encoder embedding vectors
-    return gensim.models.KeyedVectors.load_word2vec_format("data/wiki-news-300d-1M.vec", binary = False)
+    return gensim.models.KeyedVectors.load_word2vec_format("./data/wiki-news-300d-1M.vec", binary = False)
 
 def get_embeddings(encoder_model):
     ## We create the embeddings and find the vocab
@@ -75,14 +75,13 @@ def preprocess_data(X,Y,stoi,tok):
     X_processed = []
     Y_processed = []
     Dec_processed = []
-    for i in tqdm(range(len(X))):
+    for i in range(len(X)):
         x,y,dec = concat_utt(X[i],Y[i],stoi,tok)
         X_processed.append(x)
         Y_processed.append(y)
         Dec_processed.append(dec)
     return X_processed, Y_processed, Dec_processed
 
-## done
 def get_target(X,Y,dec): 
     ## generates the target values and input values
     text_input = [i[:-1] for i in X]
@@ -124,6 +123,7 @@ def change_Y(Y,unk='NE',lookup=None):
 ##############################################################
 ####################### For MELD #############################
 ##############################################################
+
 def parse_meld(df,lookup = None):
     ## parses the MELD dataset
     X, Y = {}, {}

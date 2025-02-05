@@ -2,7 +2,7 @@ from include.include import *
 from include.include_model import *
 
 class SimpleModel(nn.Module):
-    def __init__(self, embeddings,emo_dim, n_emotion, n_vocab,n_dec):
+    def __init__(self, embeddings,emo_dim, n_emotion, n_vocab):
         super(SimpleModel,self).__init__()
         ## word_dim = 300
         self.embedding_layer_text = nn.Embedding.from_pretrained(embeddings, freeze=True)
@@ -48,33 +48,41 @@ class SimpleModel(nn.Module):
 
         emotion1 = self.embedding_layer_emotion(emotion)
         emotion2 = self.Linear_emo1(emotion1)
-        emotion3 = self.Linear_emo2(emotion2)
-        emotion4 = self.Linear_emo3(emotion3)
+        emotion3 = self.relu(emotion2)
+        emotion4 = self.Linear_emo2(emotion3)
+        emotion5 = self.relu(emotion4)
+        emotion6 = self.Linear_emo3(emotion5)
 
-        hidden1 = hidden + self.Hidden_weight(emotion4*0.7 + text6*0.3)
-        hidden2 = self.Dropout(hidden1)
-        hidden3 = self.tanh(hidden2)
+        hidden1 = hidden + self.Hidden_weight(emotion6*0.7 + text6*0.3)
+        hidden2 = self.tanh(hidden1)
 
-        z = torch.cat((text6,emotion4),-1)
+        z = torch.cat((text6,emotion6),-1)
         z1 = self.Linear_fus(z)
-    
-        emotion5 = torch.cat((text6,z1),-1)
-        emotion6 = self.Linear_emo_final1(emotion5)
-        emotion7 = self.Dropout(emotion6)
-        emotion8 = self.Linear_emo_final2(emotion7)    
-        emotion9 = self.Dropout(emotion8)
-        emotion10 = self.relu(emotion9)
-        emotion11 = self.Linear_emo_final3(emotion10)
-        emotion12 = self.softmax(emotion11)
+        z2 = self.relu(z1)
+        
+        emotion7 = torch.cat((text6,z2),-1)
+        emotion8 = self.Linear_emo_final1(emotion7)
+        emotion9 = self.relu(emotion8)
+        emotion10 = self.Linear_emo_final2(emotion9)    
+        emotion11 = self.Dropout(emotion10)
+        emotion12 = self.relu(emotion11)
+        emotion13 = self.Linear_emo_final3(emotion12)
+        emotion14 = self.softmax(emotion13)
 
-        text7 = torch.cat((z1,hidden3,text6),-1)
+        text7 = torch.cat((z2,hidden2,text6),-1)
         text8 = self.Linear_utt_final1(text7)
         text9 = self.relu(text8)
         text10 = self.Linear_utt_final2(text9)
-        text11 = self.Dropout(text10)
+        text11 = self.relu(text10)
         text12 = self.Linear_utt_final3(text11)
         text13 = self.Dropout(text12)
         text14 = self.Linear_utt_final(text13)
         text15 = self.softmax(text14)
-        return text15, emotion12, hidden3
+        return text15, emotion14, hidden2
     #return emotion
+
+def load_model(path,embeddings,emo_dim, n_emotions, n_vocab):
+	model = SimpleModel(embeddings,emo_dim,n_emotions,n_vocab)
+	model.load_state_dict(torch.load(path,weights_only=True))
+	return model
+
