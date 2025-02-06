@@ -58,7 +58,7 @@ def inference(model,loader,device,batch_size,weights=None):
             inp_token = batch['texts'][:, t]
             target_token = batch['target_texts'][:, t]
             target_emotion = batch['target_emotions'][:, t]
-            pt , pe,hidden = model.forward(inp_token,inp_emotion,hidden)
+            pt , pe, hidden = model.forward(inp_token,inp_emotion,hidden)
             pred_emotion = torch.argmax(pe,1)
             pred_token = torch.argmax(pt,1)
             if target_token.size()[0] == batch_size:
@@ -101,26 +101,27 @@ def train_batch(model, batch, optimizer,lr,device,batch_size ,weights=None): ## 
     losses = []
     valids = (batch['target_emotions'] != -1).float()
     for t in range(55):#batch['texts'].size()[1]):
-        
         if valids[:,t].sum().item() == 0:
-            print("valids",valids[:,t],valids)
             continue
-        inp_emotion = batch['emotions'][:, t]
-        inp_token = batch['texts'][:, t]
-        target_token = batch['target_texts'][:, t]
-        target_emotion = batch['target_emotions'][:, t]
+        inp_emotion = batch['emotions'][:, t].to(device)
+        inp_token = batch['texts'][:, t].to(device)
+        target_token = batch['target_texts'][:, t].to(device)
+        target_emotion = batch['target_emotions'][:, t].to(device)
         pt, pe, hidden = model.forward(inp_token,inp_emotion,hidden)
+        assert(torch.isnan(pt).any() or (torch.isnan(pe).any() or torch.isnan(hidden).any()))
         loss1 = 0.7 * loss_emotions(pe, target_emotion)
         loss2 = 0.3 * loss_words(pt, target_token)
         if torch.isnan(loss1).any() or torch.isinf(loss1).any():
-            print('loss1 is nan',loss1,pe,target_emotion)
             continue
         if torch.isnan(loss2).any() or torch.isinf(loss2).any():
-            print('loss2 is nan', loss2, pt, target_token)
             continue
         loss += loss1 + loss2
         losses.append(loss1.mean().item())
         loss.backward(retain_graph=True) ## unholy consumption of memory
+        
+        del inp_emotion, inp_token, target_token
+        gc.collect()
+        torch.cuda.empty_cache()		
     optimizer.step()
     if len(losses) == 0:
       return 0, 0
@@ -131,39 +132,41 @@ def train(model, train_loader, epochs, device, n_total ,batch_size ,lr=0.01,comp
     #scheduler = StepLR(optimizer, step_size=300), gamma=0.1) 
     loss_fn = nn.CrossEntropyLoss()
     model.train()
-    model.zero_grad()
-    optimizer.zero_grad()
     model = model.to(device)
     loss_to_plot = []
     weights = get_frequency_all(train_loader,n_total).to(device)
     for epoch in range(epochs):
-        optimizer.zero_grad()
         losses = []
         print(f"Epoch {epoch+1}/{epochs}")
         l = 0
         k = 0
+        optimizer.zero_grad()
+        model.zero_grad()
+        gc.collect()
+        torch.cuda.empty_cache()
         if compute_preds:
             f1, loss, _, _, _, _ = inference(model, train_loader,device,batch_size,weights=weights)
             print(f'f1: {f1}, loss: {loss}')
-        for it, batch in enumerate(train_loader):
-            k += 1
+        for it, batch in enumerate(train_loader): 
             batch = {          
-						 'texts' : batch['texts'].to(device),
-                      'emotions' : batch['emotions'].to(device),
-                  'target_texts' : batch['target_texts'].to(device),
-               'target_emotions' : batch['target_emotions'].to(device),
-                           'dec' : batch['dec'].to(device)
+                         'texts' : batch['texts'],
+                      'emotions' : batch['emotions'],
+                  'target_texts' : batch['target_texts'],
+               'target_emotions' : batch['target_emotions'],
+                           'dec' : batch['dec']
             }
             loss_, ln = train_batch(model,batch,optimizer,lr,device,batch_size,weights=weights)
             l += ln
             losses.append(loss_)
+ 	        ## Cleaning memory to avoid leaks:
+            optimizer.zero_grad()
+            model.zero_grad()
+            gc.collect()
+            torch.cuda.empty_cache()
         loss_to_plot.append(sum(losses)/len(losses))
-        gc.collect()
-        torch.cuda.empty_cache()
         print(l)
-        print(k)
         print(f"training loss: {loss_to_plot[-1]}")
     del optimizer
-	gc.collect()
-	torch.cuda.empty_cache()
+    gc.collect()
+    torch.cuda.empty_cache()
     return loss_to_plot
