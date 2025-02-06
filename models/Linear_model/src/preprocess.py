@@ -239,3 +239,14 @@ def cast_back(words,emotions,itos,lookup):
     emotions = list(map(lambda e : lookup[e] ,emotions))
     return cast_back_aux(words,emotions)
 
+def save_dict_json(path,dic):
+    with open(path,"w+") as file:
+        json.dump(dic, file, indent=4)
+
+def load_dict_json(path):
+    loaded = dict()
+    with open(path,"r") as file:
+        loaded = json.load(file)
+    return loaded
+
+
