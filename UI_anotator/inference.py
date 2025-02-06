@@ -1,6 +1,3 @@
-from include.include import *
-from include.include_model import *
-
 class SimpleModel(nn.Module):
     def __init__(self, embeddings,emo_dim, n_emotion, n_vocab):
         super(SimpleModel,self).__init__()
@@ -59,11 +56,11 @@ class SimpleModel(nn.Module):
         z = torch.cat((text6,emotion6),-1)
         z1 = self.Linear_fus(z)
         z2 = self.relu(z1)
-
+        
         emotion7 = torch.cat((text6,z2),-1)
         emotion8 = self.Linear_emo_final1(emotion7)
         emotion9 = self.relu(emotion8)
-        emotion10 = self.Linear_emo_final2(emotion9)
+        emotion10 = self.Linear_emo_final2(emotion9)    
         emotion11 = self.Dropout(emotion10)
         emotion12 = self.relu(emotion11)
         emotion13 = self.Linear_emo_final3(emotion12)
@@ -85,3 +82,23 @@ def load_model(path,embeddings,emo_dim, n_emotions, n_vocab):
 	model = SimpleModel(embeddings,emo_dim,n_emotions,n_vocab)
 	model.load_state_dict(torch.load(path,weights_only=True))
 	return model
+
+def inferance_individual(model,texts,device):
+    model.eval()
+    texts = torch.tensor(texts)
+    pred_emotions = ['NE']
+    with torch.no_grad():
+        inp_emotion = torch.tensor(0) ## NE
+        hidden_state = torch.zeros(400).to(device)
+        for inp_text in texts:
+            _, inp_emotion, hidden_state = model.forward(inp_text,inp_emotion,hidden_state)
+            pred_emotions.append(torch.argmax(inp_emotion).item())
+    return pred_emotions
+        
+
+
+
+
+
+
+
