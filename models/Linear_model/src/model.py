@@ -79,7 +79,6 @@ class SimpleModel(nn.Module):
         text14 = self.Linear_utt_final(text13)
         text15 = self.softmax(text14)
         return text15, emotion14, hidden2
-    #return emotion
 
 def load_model(path,embeddings,emo_dim, n_emotions, n_vocab):
 	model = SimpleModel(embeddings,emo_dim,n_emotions,n_vocab)

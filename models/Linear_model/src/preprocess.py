@@ -42,7 +42,6 @@ def tokenize_text_extend_emotions(text, emotion, stoi, tok):
     decoded_emotions = [i.split('_')[0] for i in emotion]
     return text, emotion, decoded_emotions
 
-## done / to review
 def concat_utt(dialog, emotions, stoi,tok,max_size=max_size):
     ## list of utterations : [string] -> list of list of tokenized words : [int]
     tokenized_and_extended = [tokenize_text_extend_emotions(t, e, stoi, tok) for t,e in zip(dialog,emotions)]
@@ -90,11 +89,12 @@ def get_target(X,Y,dec):
     emotion_target = [i[1:] for i in Y]
     dec_input = [i[:-1] for i in dec]
     dec_target = [i[1:] for i in dec]
+    ## Setting up -1 index to target we want to "mask" -> improve training
     for i in range(len(text_target)):
         for j in range(len(text_target[i])):
-            if text_target[i][j] == 2:
+            if text_target[i][j] == 2: ## word == separator 
                 emotion_target[i][j] = -1
-            if text_target[i][j] == 0:
+            if text_target[i][j] == 0: ## word == padding
                 emotion_target[i][j] = -1
                 text_target[i][j] = -1
     return text_input, text_target, emotion_input, emotion_target, dec_input, dec_target
