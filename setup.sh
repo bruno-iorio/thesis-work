@@ -7,3 +7,4 @@ pip install matplotlib
 pip install tqdm
 pip install torchinfo
 pip install requests json
+pip install -U sentence-transformers

@@ -234,7 +234,26 @@ def cast_back_aux(words,preds):
                 current_sentence = []
     return current_dialog, sentences
 
-def cast_back(words,emotions,itos,lookup): 
+def preprocess_bert(X,Y,encoder,lookup=None):
+    lookup = {} if lookup is None else lookup
+    preprocessed_X, preprocessed_Y = [], []
+    k = 0
+    for i in range(len(X)):
+        dialog = []
+        emotions = []
+        for j in range(len(X[i])):
+            if Y[i][j] not in lookup:
+                lookup[Y[i][j]] = k 
+                k += 1 
+            emotions.append(lookup[Y[i][j]])
+        dialog = encoder.encode(X[i]) ## ?
+
+        preprocessed_X.append(dialog)
+        preprocessed_Y.append(emotions)
+    return preprocessed_X, preprocessed_Y
+
+
+def cast_back(words,emotions,itos,lookup):
     ## cast emotions into utterances for tokenized input
     words = list(map(lambda e : itos[e] ,words))
     emotions = list(map(lambda e : lookup[e] ,emotions))
