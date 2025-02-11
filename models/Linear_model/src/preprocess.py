@@ -16,6 +16,10 @@ def get_encoder():
     ## simple to get the encoder embedding vectors
     return gensim.models.KeyedVectors.load_word2vec_format("./data/wiki-news-300d-1M.vec", binary = False)
 
+def get_bert():
+    return SentenceTransformer("all-MiniLM-L6-v2")
+
+
 def get_embeddings(encoder_model):
     ## We create the embeddings and find the vocab
     unk_token, sep_token,pad_token = '<unk>', '<sep>', 'pad'
