@@ -1,0 +1,19 @@
+Start preprocessing
+Creating datasets
+Creating dataloaders
+DEVICE =  NVIDIA RTX 4000 Ada Generation
+              precision    recall  f1-score   support
+
+      Joyful       0.46      0.24      0.32       358
+         Mad       0.10      0.09      0.10       164
+          NE       0.00      0.00      0.00         0
+     Neutral       0.10      0.12      0.11       123
+    Peaceful       0.09      0.10      0.10        50
+    Powerful       0.01      0.03      0.02        63
+         Sad       0.18      0.09      0.12       181
+      Scared       0.15      0.17      0.16       114
+
+    accuracy                           0.15      1053
+   macro avg       0.14      0.11      0.11      1053
+weighted avg       0.24      0.15      0.18      1053
+
