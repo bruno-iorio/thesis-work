@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "./main.py", line 12, in <module>
+    from src.model import *
+  File "/users/iorio/Linear_model/src/model.py", line 1, in <module>
+    from include.include import *
+  File "/users/iorio/Linear_model/include/include.py", line 2, in <module>
+    import pandas as pd
+ModuleNotFoundError: No module named 'pandas'
+srun: error: lipn-rtx1: task 0: Exited with exit code 1

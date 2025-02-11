@@ -42,14 +42,14 @@ def inference(model,loader,device,batch_size,weights=None):
     pred_words = []
     losses = []
     for batch in loader:
-        batch = {          
-						 'texts' : batch['texts'].to(device),
+        batch = {        'texts' : batch['texts'].to(device),
                       'emotions' : batch['emotions'].to(device),
                   'target_texts' : batch['target_texts'].to(device),
                'target_emotions' : batch['target_emotions'].to(device),
                            'dec' : batch['dec'].to(device)
         }
-        mask = (batch['target_texts'] != -1).float()
+        valids1 = (batch['target_texts'] != -1).float()
+        valids2 = (batch['target_emotions'] != -1).float()
         loss_fn = nn.CrossEntropyLoss(ignore_index=-1) if weights is None else nn.CrossEntropyLoss(weight=weights.to(device),ignore_index=-1)
         inp_emotion = torch.tensor([0]*batch['target_texts'].size()[0]).to(device)
         hidden = torch.zeros((batch['texts'].size()[0],400)).to(device)
@@ -58,7 +58,7 @@ def inference(model,loader,device,batch_size,weights=None):
             inp_token = batch['texts'][:, t]
             target_token = batch['target_texts'][:, t]
             target_emotion = batch['target_emotions'][:, t]
-            pt , pe, hidden = model.forward(inp_token,inp_emotion,hidden)
+            pt , pe, hidden = model.infer(inp_token,inp_emotion,hidden)
             pred_emotion = torch.argmax(pe,1)
             pred_token = torch.argmax(pt,1)
             if target_token.size()[0] == batch_size:
@@ -66,13 +66,15 @@ def inference(model,loader,device,batch_size,weights=None):
                 trues.append(target_emotion)
                 words.append(target_token)
                 pred_words.append(pred_token)
-            if mask[:,t].sum().item() == 0:  ## if it has to stop, then append first
+            if valids1[:,t].sum().item() == 0 or valids2[:,t].sum.item() == 0:  ## if it has to stop, then append first
                 continue
             loss += 0.7*loss_fn(pe, target_emotion)/batch_size
             inp_emotion = pred_emotion
             if torch.isnan(loss).any() or torch.isinf(loss).any():
                 continue
         losses.append(loss.mean().item())
+    
+	## Annoying appending part:
     trues = torch.stack(trues)
     preds = torch.stack(preds)
     words = torch.stack(words)
@@ -93,44 +95,44 @@ def inference(model,loader,device,batch_size,weights=None):
     return F.f1_score(preds,trues,average='macro'), sum(losses)/len(losses),preds,trues,words,pred_words
 
 ## train functions
-def train_batch(model, batch, optimizer,lr,device,batch_size ,weights=None): ## train for each batch (set to size 1 in this case)
+def train_batch(model, batch, optimizer,lr,device,batch_size ,weights=None,max_norm = 1.0): ## train for each batch (set to size 1 in this case)
     loss = 0
     loss_words = nn.CrossEntropyLoss(ignore_index=-1)
     loss_emotions = nn.CrossEntropyLoss(ignore_index=-1) if weights is None else nn.CrossEntropyLoss(weight=weights,ignore_index=-1)
     hidden = torch.zeros((batch['texts'].size()[0],400), requires_grad=True).to(device)
     losses = []
-    valids = (batch['target_emotions'] != -1).float()
-    for t in range(55):#batch['texts'].size()[1]):
-        if valids[:,t].sum().item() == 0:
-            continue
-        inp_emotion = batch['emotions'][:, t].to(device)
-        inp_token = batch['texts'][:, t].to(device)
-        target_token = batch['target_texts'][:, t].to(device)
-        target_emotion = batch['target_emotions'][:, t].to(device)
-        pt, pe, hidden = model.forward(inp_token,inp_emotion,hidden)
-        assert(torch.isnan(pt).any() or (torch.isnan(pe).any() or torch.isnan(hidden).any()))
+    valids1 = (batch['target_emotions'] != -1).float()
+    valids2 = (batch['target_texts'] != -1).float()
+    for t in range(50):# batch['texts'].size()[1]): ## TODO: Test if it works with 5 instead of 55, to run faster
+        if valids1[:,t].sum().item() == 0 or valids2[:,t].sum().item() == 0: ## Am I using the valids/ mask ideally? Or should I change the preprocessing so that it creates a masked object? 
+            continue                      ## TODO: Test this alternative with small examples to see if it works
+        inp_emotion = batch['emotions'][:, t]
+        inp_token = batch['texts'][:, t]
+        target_token = batch['target_texts'][:, t]
+        target_emotion = batch['target_emotions'][:, t]
+
+        pt, pe, hidden = model.forward(inp_token, inp_emotion, hidden)
         loss1 = 0.7 * loss_emotions(pe, target_emotion)
         loss2 = 0.3 * loss_words(pt, target_token)
-        if torch.isnan(loss1).any() or torch.isinf(loss1).any():
+        if torch.isnan(loss1).any() or torch.isinf(loss1).any(): ## TODO: Are the nans impossible to evade? Check
             continue
         if torch.isnan(loss2).any() or torch.isinf(loss2).any():
             continue
+
         loss += loss1 + loss2
         losses.append(loss1.mean().item())
         loss.backward(retain_graph=True) ## unholy consumption of memory
-        
-        del inp_emotion, inp_token, target_token
-        gc.collect()
-        torch.cuda.empty_cache()		
+
+    torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm) ## prevent that the gradient explodes (otherwise will have nan everywhere) ## TODO: Why does it make everything so slow?
     optimizer.step()
     if len(losses) == 0:
       return 0, 0
     else:
         return sum(losses)/(len(losses)),len(losses) ## average of the loss over the emotions
 def train(model, train_loader, epochs, device, n_total ,batch_size ,lr=0.01,compute_preds = False):
+    max_norm = 1.0  # Define a threshold
     optimizer = optim.SGD(model.parameters(),lr=lr)
     #scheduler = StepLR(optimizer, step_size=300), gamma=0.1) 
-    loss_fn = nn.CrossEntropyLoss()
     model.train()
     model = model.to(device)
     loss_to_plot = []
@@ -142,31 +144,114 @@ def train(model, train_loader, epochs, device, n_total ,batch_size ,lr=0.01,comp
         k = 0
         optimizer.zero_grad()
         model.zero_grad()
-        gc.collect()
-        torch.cuda.empty_cache()
         if compute_preds:
             f1, loss, _, _, _, _ = inference(model, train_loader,device,batch_size,weights=weights)
             print(f'f1: {f1}, loss: {loss}')
         for it, batch in enumerate(train_loader): 
             batch = {          
-                         'texts' : batch['texts'],
-                      'emotions' : batch['emotions'],
-                  'target_texts' : batch['target_texts'],
-               'target_emotions' : batch['target_emotions'],
-                           'dec' : batch['dec']
+                         'texts' : batch['texts'].to(device),
+                      'emotions' : batch['emotions'].to(device),
+                  'target_texts' : batch['target_texts'].to(device),
+               'target_emotions' : batch['target_emotions'].to(device)
+                       #    'dec' : batch['dec'].to(device) ## maybe add it later
             }
-            loss_, ln = train_batch(model,batch,optimizer,lr,device,batch_size,weights=weights)
+            loss_, ln = train_batch(model,batch,optimizer,lr,device,batch_size,weights=weights,max_norm=max_norm)
             l += ln
             losses.append(loss_)
  	        ## Cleaning memory to avoid leaks:
             optimizer.zero_grad()
             model.zero_grad()
-            gc.collect()
-            torch.cuda.empty_cache()
+            #torch.cuda.empty_cache()
         loss_to_plot.append(sum(losses)/len(losses))
+        torch.cuda.empty_cache()
         print(l)
         print(f"training loss: {loss_to_plot[-1]}")
-    del optimizer
-    gc.collect()
+    # del optimizer
     torch.cuda.empty_cache()
     return loss_to_plot
+
+
+def train_one_iteration(model, train,device,n_total,batch_size,lr=0.01):
+	## Debugging purposes
+    model.train()
+    weights = get_frequency_all(train,n_total).to(device)
+    optimizer = optim.SGD(model.parameters(),lr=lr)
+    max_norm = 1.0 
+    for batch in train:
+        batch = {          
+                         'texts' : batch['texts'].to(device),
+                      'emotions' : batch['emotions'].to(device),
+                  'target_texts' : batch['target_texts'].to(device),
+               'target_emotions' : batch['target_emotions'].to(device)
+                       #   'dec' : batch['dec'].to(device) ## maybe add it later
+            }
+        loss_, ln = train_batch(model,batch,optimizer,lr,device,batch_size,weights=weights,max_norm=max_norm)
+        break
+
+
+def inference_sentence(model,loader,device, batch_size):
+    model.eval()
+    model = model.to(device)
+    for batch in loader:
+        batch = { 'texts' : batch['texts'].to(device),
+                'emotions': batch['emotions'].to(device),
+                'target_texts' : batch['target_texts'].to(device),
+                'target_emotions' : batch['target_emotions'].to(device)
+        }
+        hidden = model.init_hidden(batch['emotions'].size()[0],300,device)
+        inp_emotion = batch['emotions'][:,0]
+        for t in range(inp_emotion.size()[1]):
+            inp_text = batch['texts'][t]
+            target_emotion = batch['target_emotions']
+            target_texts = batch['target_texts']
+
+            pt, pe, hidden = model.forward(inp_text,inp_emotion,hidden)
+            
+
+
+
+
+def train_sentence_batch(model, batch, optimizer,lr,device,batch_size): ## train for each batch (set to size 1 in this case)
+    loss_emotions = nn.CrossEntropyLoss()
+    loss_texts = nn.MSELoss()
+    hidden = model.init_hidden(batch['texts'].size()[0],300,device)
+    losses = []
+    for t in batch['emotions'].size()[1]:
+        inp_text = batch['texts'][t]
+        inp_emotion = batch['emotions'][:,t]
+        target_emotion = batch['target_emotions'][:,t]
+        target_text = batch['target_texts'][t]
+        pt, pe, hidden = model.forward(inp_text,inp_emotion,hidden)
+        loss1 = loss_emotions(pe,target_emotion)
+        loss2 = loss_texts(pt,target_texts)
+        loss = loss1*0.8 + 0.2*loss2
+        loss.backward()
+
+        torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm) ## prevent that the gradient explodes (otherwise will have nan everywhere) ## TODO: Why does it make everything so slow?
+        optimizer.step()
+        losses.append(loss.mean().item())
+    if len(losses) == 0:
+        return 0
+    return sum(losses)/len(losses)
+    
+def train_sentence(model, train_loader, device, epochs, batch_size,lr=0.01):
+    model.train()
+    model = model.to(device)
+    optimizer = optim.SGD(model.parameters(),lr=lr)
+    max_norm = 1.0
+        
+    for batch in train_loader:
+        batch = { 'texts' : batch['texts'].to(device),
+                'emotions': batch['emotions'].to(device),
+                'target_texts' : batch['target_texts'].to(device),
+                'target_emotions' : batch['target_emotions'].to(device)
+        }
+        loss = train_sentence_batch(model,batch,optimizer,lr,device,batch_size)
+
+
+    
+        
+        
+
+
+ 

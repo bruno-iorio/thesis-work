@@ -18,16 +18,17 @@ def get_encoder():
 
 def get_embeddings(encoder_model):
     ## We create the embeddings and find the vocab
-    unk_token, sep_token = '<unk>', '<sep>'
+    unk_token, sep_token,pad_token = '<unk>', '<sep>', 'pad'
     embedding_vectors = torch.from_numpy(encoder_model.vectors) 
     pretrained_vocab = copy.deepcopy(encoder_model.index_to_key)
-    pretrained_vocab[:0] = [unk_token,sep_token]
+    pretrained_vocab[:0] = [,pad_token, unk_token,sep_token]
 
     stoi = {word: i for i, word in enumerate(pretrained_vocab)}
     itos = {i: word for i, word in enumerate(pretrained_vocab)}
 
     pretrained_embeddings = torch.cat((torch.ones(1,embedding_vectors.shape[1]),embedding_vectors))
     pretrained_embeddings = torch.cat((-torch.ones(1,embedding_vectors.shape[1]),embedding_vectors))
+    pretrained_embeddings = torch.cat((-torch.zeros(1,embedding_vectors.shape[1]),embedding_vectors))
     return pretrained_embeddings,embedding_vectors, stoi, itos
 
 def get_tokenizer():
@@ -42,6 +43,7 @@ def tokenize_text_extend_emotions(text, emotion, stoi, tok):
     decoded_emotions = [i.split('_')[0] for i in emotion]
     return text, emotion, decoded_emotions
 
+## done / to review
 def concat_utt(dialog, emotions, stoi,tok,max_size=max_size):
     ## list of utterations : [string] -> list of list of tokenized words : [int]
     tokenized_and_extended = [tokenize_text_extend_emotions(t, e, stoi, tok) for t,e in zip(dialog,emotions)]
@@ -89,12 +91,11 @@ def get_target(X,Y,dec):
     emotion_target = [i[1:] for i in Y]
     dec_input = [i[:-1] for i in dec]
     dec_target = [i[1:] for i in dec]
-    ## Setting up -1 index to target we want to "mask" -> improve training
     for i in range(len(text_target)):
         for j in range(len(text_target[i])):
-            if text_target[i][j] == 2: ## word == separator 
+            if text_target[i][j] == 2:
                 emotion_target[i][j] = -1
-            if text_target[i][j] == 0: ## word == padding
+            if text_target[i][j] == 0:
                 emotion_target[i][j] = -1
                 text_target[i][j] = -1
     return text_input, text_target, emotion_input, emotion_target, dec_input, dec_target
@@ -240,13 +241,12 @@ def cast_back(words,emotions,itos,lookup):
     return cast_back_aux(words,emotions)
 
 def save_dict_json(path,dic):
-    with open(path,"w+") as file:
-        json.dump(dic, file, indent=4)
+    with open(path, 'w+') as file:
+        json.dump(dic,file,indent=4)
 
 def load_dict_json(path):
     loaded = dict()
-    with open(path,"r") as file:
+    with open(path,'r') as file:
         loaded = json.load(file)
     return loaded
-
 

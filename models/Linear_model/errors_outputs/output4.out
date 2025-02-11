@@ -1,0 +1,97 @@
+Start preprocessing
+Creating datasets
+Creating dataloaders
+Creating model
+DEVICE =  Quadro RTX 5000
+cuda
+training
+Epoch 1/30
+7865
+training loss: 4.661345522978165
+Epoch 2/30
+7865
+training loss: 4.661103206520541
+Epoch 3/30
+7865
+training loss: 4.660702907819319
+Epoch 4/30
+7865
+training loss: 4.660146953100169
+Epoch 5/30
+7865
+training loss: 4.659225032076438
+Epoch 6/30
+7865
+training loss: 4.657369247759062
+Epoch 7/30
+7865
+training loss: 4.6537294796448325
+Epoch 8/30
+7865
+training loss: 4.643908244094801
+Epoch 9/30
+7865
+training loss: 4.620880878373307
+Epoch 10/30
+7865
+training loss: 4.597476656211082
+Epoch 11/30
+7865
+training loss: 4.574893421590213
+Epoch 12/30
+7865
+training loss: 4.551957958303889
+Epoch 13/30
+7865
+training loss: 4.5263302582960865
+Epoch 14/30
+7865
+training loss: 4.509469322573208
+Epoch 15/30
+7865
+training loss: 4.491261878562292
+Epoch 16/30
+7865
+training loss: 4.474342605556869
+Epoch 17/30
+7865
+training loss: 4.458827671880412
+Epoch 18/30
+7865
+training loss: 4.441657109936559
+Epoch 19/30
+7865
+training loss: 4.435558357772292
+Epoch 20/30
+7865
+training loss: 4.42058352466154
+Epoch 21/30
+7865
+training loss: 4.4115840921565646
+Epoch 22/30
+7865
+training loss: 4.397917583863292
+Epoch 23/30
+7865
+training loss: 4.391508844561132
+Epoch 24/30
+7864
+training loss: 4.386559439684469
+Epoch 25/30
+7865
+training loss: 4.373540999187608
+Epoch 26/30
+7865
+training loss: 4.36607401890885
+Epoch 27/30
+7865
+training loss: 4.35633157456065
+Epoch 28/30
+7865
+training loss: 4.353558006153239
+Epoch 29/30
+7865
+training loss: 4.342155660555308
+Epoch 30/30
+7865
+training loss: 4.338647796875795

@@ -18,7 +18,11 @@ from src.dataset import *
 ########################
 
 k = 50000
-SAVEPATH = "model/nn_hidden_model.pth"
+SAVEPATH = "model/nn_hidden_model4.pth"
+SAVELOOKUP = "data/lookup.json"
+SAVESTOI = "data/stoi.json"
+LOADPATH = "model/nn_hidden_model3.pth"
+
 
 def emory():
 	print("Start preprocessing")
@@ -59,26 +63,42 @@ def emory():
 	train_loader_emory = DataLoader(train_data_emory, batch_size=batch_size,shuffle = True)
 	test_loader_emory = DataLoader(test_data_emory, batch_size=batch_size,shuffle = True)
 	val_loader_emory = DataLoader(val_data_emory, batch_size=batch_size, shuffle = True)
-
+   
+	#save_dict_json(SAVELOOKUP,lookup_emory)
+	#save_dict_json(SAVESTOI,stoi_emory)
+	
+	emotion_dim = 200
+	n_emotions = len(lookup_emory) 
+	n_words = len(stoi_emory)
+	"""
+	model = load_model(LOADPATH,pretrained_embeddings,emotion_dim,n_emotions,n_words)
+	print(model.Hidden_weights)
+	f1, loss, preds, trues, words, pred_words = inference(model,val_loader_emory,device,batch_size)
+	casted_preds , sentences = cast_back(words,preds,itos_emory,lookup_emory)
+	casted_trues, _ = cast_back(words,trues, itos_emory)
+	print(confusion_matrix(preds_preds, casted_trues))
+	
+	"""
 	print("Creating model")
 ## Create model and add tweeks
 	device = activate_gpu()
 	print(device)	
 	
-	emotion_dim = 200
-	n_emotions = len(lookup_emory) 
-	n_words = len(stoi_emory)
+
 	model = SimpleModel(pretrained_embeddings,emotion_dim,n_emotions,n_words)
-	print("n_words is ", n_words)
-	print('n_emotions is', n_emotions)
 	print("training")
 	## train
 	epochs = 30
 	n_total = len(lookup_emory)
-	print("n_total is", n_total)
+	#train_one_iteration(model,train_loader_emory,device,n_total,batch_size)
 	losses = train(model,train_loader_emory, epochs,device,n_total,batch_size)
-	
 	torch.save(model.state_dict(), SAVEPATH)
+	
+	f1, loss, preds, trues, words, pred_words = inference(model,val_loader_emory,device,batch_size)
+	casted_preds , sentences = cast_back(words,preds,itos_emory,lookup_emory)
+	casted_trues, _ = cast_back(words,trues, itos_emory)
+	print(confusion_matrix(preds_preds, casted_trues))
+	
 	return 0
 
 def test():
@@ -115,3 +135,6 @@ def test():
 	print(len(Y_train_emory[0]))
 
 emory()
+
+
+
