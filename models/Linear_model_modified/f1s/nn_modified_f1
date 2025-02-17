@@ -1,0 +1,60 @@
+Start preprocessing
+Creating datasets
+Creating dataloaders
+Creating model
+DEVICE =  NVIDIA RTX 4000 Ada Generation
+cuda
+training
+Epoch 1/10
+9456
+training loss: 4.660988144463088
+Epoch 2/10
+9456
+training loss: 4.659901202178848
+Epoch 3/10
+9456
+training loss: 4.659270674091103
+Epoch 4/10
+9445
+training loss: 4.6584560870592115
+Epoch 5/10
+9456
+training loss: 4.657808164755504
+Epoch 6/10
+9455
+training loss: 4.656843170991638
+Epoch 7/10
+9456
+training loss: 4.656272702965437
+Epoch 8/10
+9456
+training loss: 4.6551560396974665
+Epoch 9/10
+9456
+training loss: 4.654235076329429
+Epoch 10/10
+9456
+training loss: 4.652643725704624
+[[ 87  96   0  42  36  41  89  59]
+ [ 84   5   0  23   0   2  16  15]
+ [  0   0   0   0   0   0   0   0]
+ [  0   0   0   0   0   0   0   0]
+ [  0   0   0   0   0   0   0   0]
+ [  0   0   0   0   0   0   0   0]
+ [  0   0   0   0   0   0   0   0]
+ [148  45   3  52  15  17  51  30]]
+              precision    recall  f1-score   support
+
+      Joyful       0.19      0.27      0.23       319
+         Mad       0.03      0.03      0.03       146
+          NE       0.00      0.00      0.00         3
+     Neutral       0.00      0.00      0.00       117
+    Peaceful       0.00      0.00      0.00        51
+    Powerful       0.00      0.00      0.00        60
+         Sad       0.00      0.00      0.00       156
+      Scared       0.08      0.29      0.13       104
+
+    accuracy                           0.13       956
+   macro avg       0.04      0.07      0.05       956
+weighted avg       0.08      0.13      0.09       956
+
