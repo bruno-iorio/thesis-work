@@ -27,7 +27,7 @@ def get_embeddings(encoder_model):
     pretrained_embeddings = torch.cat((torch.zeros(1,embedding_vectors.shape[1]),embedding_vectors))
     pretrained_embeddings = torch.cat((torch.ones(1,embedding_vectors.shape[1]),embedding_vectors))
     pretrained_embeddings = torch.cat((-torch.ones(1,embedding_vectors.shape[1]),embedding_vectors))
-    return pretrained_vocab_embeddings,embedding_vectors, stoi, itos
+    return pretrained_embeddings,embedding_vectors, stoi, itos
 
 def get_tokenizer():
     ## simple to create a tokenizer
