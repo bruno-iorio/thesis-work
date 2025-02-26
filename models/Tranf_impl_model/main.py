@@ -53,7 +53,7 @@ def emory():
     test_dataset_emory = CustomedDataset(X_test_emory,Y_test_emory,X_test_target_emory,Y_test_target_emory) 
     val_dataset_emory = CustomedDataset(X_val_emory,Y_val_emory,X_val_target_emory,Y_val_target_emory) 
 
-    batch_size = 10
+    batch_size = 5
     train_loader_emory = DataLoader(train_dataset_emory,batch_size=batch_size,shuffle=True)
     test_loader_emory = DataLoader(test_dataset_emory,batch_size=batch_size,shuffle=True)
     val_loader_emory = DataLoader(val_dataset_emory,batch_size=batch_size,shuffle=True)
@@ -61,32 +61,33 @@ def emory():
     device = activate_gpu()
     n_vocab = len(stoi_emory)
     n_emotion = len(lookup_emory)
-    model = TransfModel(pretrained_embeddings,n_vocab,n_emotion,device)
-
-    epochs = 2
-
+    model = AttentionModel(pretrained_embeddings,300,50,n_vocab,n_emotion)
+    
+    epochs = 50
+    losses = train(model,train_loader_emory,test_loader_emory,epochs,device,n_emotion)
+    uplook = {a:b for (b,a) in lookup_emory.keys()}
     trues, preds = inference(model,val_loader_emory,device)
-    print(classification_report(trues, preds))
-    print(confusion_matrix(trues, preds))
-    losses = train(model,train_loader_emory,epochs,device)
-    trues, preds = inference(model,val_loader_emory,device)
+    #trues = [uplook[i] for i in trues]
+    #preds = [uplook[i] for i in preds]
+    
     print(classification_report(trues, preds))
     print(confusion_matrix(trues, preds))
     return 0
 
 
 ###### For DEBUG purposes ######
-def test_model():
+def TEST_MODEL():
     encoder_model = get_encoder()
     pretrained_embeddings, embeddings_vectors, stoi_emory, itos_emory = get_embeddings(encoder_model)
     device = activate_gpu()
     n_vocab = 20
     n_emotions = 20
     model = TransfModel(pretrained_embeddings,n_vocab,n_emotions,device)
+    model.eval()
     inp_text = torch.ones(4,199,1,dtype=torch.long)
     inp_emo = torch.ones(4,199,1,dtype=torch.long)
     out = model.forward(inp_text,inp_emo)
-    out = torch.argmax(out,dim=2)
+    out = torch.argmax(out,dim=1)
     print(out)
     print(out.size())
 
@@ -123,7 +124,7 @@ def test():
     print(Y_train_emory[:2])
     print(len(Y_train_emory[0]))
 
+# test_model()
 emory()
-
 
 
