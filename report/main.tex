@@ -1,14 +1,18 @@
 \documentclass[oneside, a4paper, onecolumn, 11pt]{article}
 
 % Change this: Customize the title, author, advisor, abstract
-\newcommand{\thesistitle}[0]{A very long and informative title for my thesis work}
+\newcommand{\thesistitle}[0]{Emotion Recognition in Conversation through Emotion Flow}
 \newcommand{\authorname}[0]{Bruno Iorio}
 
 \newcommand{\supervisor}[0]{Gaël Guibon}
 \newcommand{\supervisorinstitution}[0]{LIPN - Université Sorbonne Paris Nord}
 
 \newcommand{\abstracttext}[0]{%
-  (to write abstract)
+  Emotion Recognition in Conversation (ERC) is a very important domain, which has been gaining more attention in recent years, 
+  especially within NLP. In the scope of Emotion Recognition, identifying emotions in dialogues plays an essential role. This is because 
+  most of the emotional text data collection happens in the context of a conversation between two or more parties (e.g. customer service survey).
+  In this paper we discuss the limitation of previous approches to the ERC task, while also evaluating an original approach
+  to the same problem using Causal learning, which we identify as the Emotion Flow and attention mechanisms. (initial version)
 }
 
 \usepackage[
@@ -129,33 +133,36 @@
 
 %\pagenumbering{arabic}
 
-\section{Introduction}
+\section{Introduction}  % I am thinking of adding overview on the topic + Related work
 
-\subsection{Guidelines for your thesis report}
+Emotions can be defined as one's psicological state. Sometimes, it can be very subtle, volatile,
+and even ambiguous depending on the context. For instance, joyfulness, happiness, and love are generally
+considered similar, sometimes only begin distinguished by intensity. So, the task of identifying these emotions
+are not always trivial even from a human perspective, so this is why Emotion Recognition has become so important
+recently. Within this area, Emotion recognition in text plays a significant role, since it can be leveraged in 
+many different contexts, e.g. customer's service, catalogue algorithms, etc (add more examples).
 
-\begin{itemize}
-\item Structure your thesis using sections, subsections, paragraphs as you like. We advise you to not use chapters (the thesis is a ``short'' document, it should not be more than 30 pages). However, you are free to use them if you think that will improve your work (so, at your own risk).
-%
-\item Use bibtex to cite related work, e.g., \cite{DBLP:journals/x/Turing37}, adding your reference in the {main.bib} file and use the {$\backslash$cite} command. 
-%
-\item Change the value of the commands {$\backslash$thesistitle}, {$\backslash$authorname}, {$\backslash$supervisor}, {$\backslash$supervisorinstitution}, {$\backslash$abstracttext} to set up the content of the title page. These commands are beginning of the {main.tex} file.
-%
-\item The thesis should be \textbf{at most} 30 pages long. The official guideline is to have a thesis ``between 20 and 30 pages long''. However, these page limits are a \emph{guideline} and will not be enforced strictly. 
-%
-The main advise is to shoot for quality and not or length: we prefer reading fewer pages containing high quality, well explained, work rather than 30 pages of messy content. Your grade is not a function of the number of pages!
-%
-Clearly, it's a red flag if your thesis length deviates a lot from the expected value of 20 pages (e.g., your thesis has 5 pages or it has 60 pages).
-%
-\item The appendix is \textbf{not included} in the page count, while the title page, abstract page, table of content page, and all the bibliography instead are included. Again, the page limit is not enforced strictly, so this information should not be extremely important.
-%
-\item Note: we will not evaluate your appendix that should not contain your thesis contribution but only provide additional details (e.g., some important code, additional tables or details for the experiments, \ldots).
-%
-\item You \textbf{cannot} change the tex template (e.g., font size, margin size, \ldots). We fix a template so all the students work under the same condition. Get in touch if you see some bug in the template or some possible improvement (we may, or not, improve the template with your suggestion).
-% 
-\end{itemize}
+In this context, studying Emotion Recognition in Conversation (ERC) is very relevant, because the flow of 
+words can generate a flow of emotions, and they work together to convey meaning to a conversation. This is a very challenging 
+task, because exploiting contextual information has its limitations. And previous works haven't explored properly how the 
+flow of emotions in a conversation (e.g. the graph describing the emotional changes throughout a conversation) relate with 
+contextual information. 
 
+(ADD PICTURE DEPICTING EMOTION FLOW)
+
+\noindent 
+
+\section{Related Work} 
+
+\section{Discussion (name subject to change)} % So we can discuss the limitiation of previous approaches 
+
+\section{Datasets used}
+
+
+\section{Our Approach / Methodology (Absolutely going to change this title)}
 
 \newpage
+\nocite{*}
 \bibliographystyle{plain}
 \bibliography{main}
 
