@@ -95,7 +95,7 @@
 }
 
 \vspace*{2em}
-\textit{Academic year 2023/2024}
+\textit{Academic year 2024/2025}
 
 \end{center}
 
@@ -136,13 +136,10 @@
 \section{Introduction}  % I am thinking of adding overview on the topic + Related work
 
 Emotions can be defined as one's psicological state, which can be caused by internal or external factors of an individual.
-Whereas studying internal factors for the emotions of an individual, such as mental state and background, can be difficult, 
-understanding external is a very interesting problem, and also tends to be much more viable in the scope of Natural Language 
-Processing (NLP). For instance, the textual context in which a dialogue occurs plays a significant role in how each of the 
-conversation parties will both absorb the same information, which may derive different reactions, or emotions.
-
-Furthermore, in the context of an interaction wwe can derive the concept of Emotion Flow, which is the graph that describes 
-the change in emotions throughout an exchange between two or more parties. It can be particularly useful when studying 
+While studying internal factors for the emotions, such as mental state and background, can be very difficult, external factors
+tend to be much more viable for studying, particularly Within the field of Natural Language Processing (NLP). The textual context 
+provides very significant information that can directly influence the emotion present in a text. In a dialogue, for example, emotions 
+in dialogues will depend heavely on the way that the dialogue progress.
 
 (INSERT DIAGRAM EXEMPLIFYING THE ABOVE)
 
@@ -160,17 +157,26 @@ WHY THE CONVERSATION FRAMEWORK IS IMPORTANT)}
 Even from a human perspective, identifying emotions can be very difficult, especially when we cannot rely on other factors such
 as voice tone, gestures, facial expressions etc. Also, even the classification of emotions can be considered ambiguous sometimes.
 For instance, joyfulness, happiness, and love are generally considered similar, and sometimes only being distinguished in terms of
-intensity. This disambiguouity is what imposes the challenges in ERC, motivating many different approaches for this task.
+intensity. This disambiguouity is what imposes the challenges in ERC, motivating many different approaches for this task. 
 
-Previous researches have extensively studied how different model architectures affect the performance of the models. (ADD EXAMPLES OF 
-ARCHITECTURES). 
+Previous researches have extensively studied how different model architectures affect the performance of the models. 
+DialogueRNN \cite{majumder2019dialoguernnattentivernnemotion} uses Gated Recurrent Networks (GRN) to infer a representation for 
+each emotion, while applying an attention mechanism to predict an emotion. ERC-DP \cite{wang2021t2vladgloballocalsequencealignment} 
+
 
 $$\vdots$$
 
 $$\vdots$$
 
-However, as of today, there is not much reasearch on how the Emotion Flow can affect a model's performance.
+Among the factors that can influence emotion detection, we particularly study the Emotion Flow in the conversation, which can be
+denoted as the graph describing the evolution, or change, in emotion throughout the conversation. However, the use of the Emotion 
+Flow is limited to an utterance level. Which, while being a very logical way of studying emotions in conversation, has left some 
+space for how a word level approach would perform. This is, instead of predicting an emotion for each utterance, a word level approach 
+would predict an emotion for word. Indeed, to the extend of our research, there isn't any work evaluating the former approach in the 
+task of ERC, leaving us with some room to study it.
 
+In this Project, we aim at evaluating how a word level approach can be combined with the Emotion Flow in the ERC task. This comes with 
+the challenge of determining ways to fuse the information given by the Emotion Flow and the flow of words. 
 
 $$\vdots$$
 
@@ -179,13 +185,21 @@ $$\vdots$$
 (ADD PICTURE DEPICTING EMOTION FLOW)
 
 \section{Related Work} 
+Probably, the most challenging problem in this project is to find efficient ways to fuse the textual and emotional information. 
+In \cite{LIU2025126924}, it is applied a window transformer - using narrow 2D window masks - to catch short-term inter-utterance relations, 
+used in the task of Causal Emotion Entailment(CEE), e.g. determining which parts of the text are causing each emotion. This was 
+particularly inspired from MPEG \cite{10252019}, where the emotional information is embeddeded and later on fused with the textual 
+information using an attention layer. This is useful because the CEE is closely related to ERC , and actually its use can actually 
+improve the effeciency of ERC models \cite{LIU2025126924}. In 
+
 
 \section{Discussion (name subject to change)} % So we can discuss the limitiation of previous approaches 
 
 \section{Datasets used}
 
-\section{Limitation of our approach}
 \section{Our Approach / Methodology (Absolutely going to change this title)}
+
+\section{Limitation of our approach}
 
 \newpage
 \nocite{*}
@@ -199,4 +213,4 @@ $$\vdots$$
 \label{sec:appendix}
 
 \end{document}
-
+;
