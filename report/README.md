@@ -1,4 +1,4 @@
-This folder contains the files dedicated to the report of the project. It was taken from ```smover/bt_template``` git page. It is the mandatory template format for this thesis.
+### This folder contains the files dedicated to the report of the project. It was taken from ```smover/bt_template``` git page. It is the mandatory template format for this thesis.
 
 Plan detaillé:
 
