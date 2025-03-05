@@ -27,8 +27,8 @@ class AttentionModel(nn.Module):
         self.multi_head_attention_masked = nn.MultiheadAttention(embed_dim=encoded_dim,num_heads=20,dropout = 0.2, batch_first=True)
         
         self.encoder_emo = nn.Embedding(n_emotion,encoded_dim)
-        self.encoder_text = nn.Embedding.from_pretrained(embeddings, freeze=True)
-        #self.encoder_text = nn.Embedding(n_vocab,encoded_dim)
+        #self.encoder_text = nn.Embedding.from_pretrained(embeddings, freeze=True)
+        self.encoder_text = nn.Embedding(n_vocab,encoded_dim)
         
 
         self.Linear_text1 = nn.Linear(encoded_dim,encoded_dim)

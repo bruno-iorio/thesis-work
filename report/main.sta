@@ -1,0 +1,4 @@
+\standalonepreambles
+\subpreamble{img/model_diagrams/simple_model.tex}
+\usepackage {tikz}\usetikzlibrary {positioning}
+\endsubpreamble

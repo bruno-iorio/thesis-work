@@ -39,3 +39,4 @@ Plan detaillé:
     1) around 2 to 3 paragraphs to summarize everything that has been done, including the results.
     2) Identify limitations and possible sugestions
 
+8) Glossary

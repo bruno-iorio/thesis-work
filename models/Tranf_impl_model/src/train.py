@@ -100,7 +100,7 @@ def train_batch(model,optimizer,batch,device,weights_emo=None,weights_text=None)
     return loss_emo.mean().item()
 
 def train(model, loader, test_loader , epochs, device,n_emotion,n_vocab):
-    optimizer = optim.Adam(model.parameters(),lr = 0.0001)
+    optimizer = optim.Adam(model.parameters(),lr = 0.001)
     model = model.to(device)
     model.train()
     model.zero_grad()
