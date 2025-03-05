@@ -19,70 +19,70 @@ class AdditiveAttention(nn.Module): ## Bahdanau attention // Taken from sooftwar
         return context, attn
 
 class AttentionModel(nn.Module):
-    def __init__(self,embeddings,encoded_text, encoded_emo, n_vocab,n_emotion):
+    def __init__(self,embeddings,encoded_dim, encoded_emo, n_vocab,n_emotion,device):
         super(AttentionModel,self).__init__()
-        self.attention = AdditiveAttention(encoded_text)
-        self.multi_head_attention1 = nn.MultiheadAttention(embed_dim=encoded_text,num_heads=20,dropout = 0.2, batch_first=True)
-        self.multi_head_attention2 = nn.MultiheadAttention(embed_dim=encoded_text,num_heads=20,dropout = 0.2, batch_first=True)
+        self.attention = AdditiveAttention(encoded_dim)
+        self.multi_head_attention1 = nn.MultiheadAttention(embed_dim=encoded_dim,num_heads=20,dropout = 0.2, batch_first=True)
+        self.multi_head_attention2 = nn.MultiheadAttention(embed_dim=encoded_dim,num_heads=20,dropout = 0.2, batch_first=True)
+        self.multi_head_attention_masked = nn.MultiheadAttention(embed_dim=encoded_dim,num_heads=20,dropout = 0.2, batch_first=True)
         
-        self.encoder_emo = nn.Embedding(n_emotion,encoded_text)
+        self.encoder_emo = nn.Embedding(n_emotion,encoded_dim)
         self.encoder_text = nn.Embedding.from_pretrained(embeddings, freeze=True)
-        #self.encoder_text = nn.Embedding(n_vocab,encoded_text)
+        #self.encoder_text = nn.Embedding(n_vocab,encoded_dim)
         
 
-        self.Linear_text1 = nn.Linear(encoded_text,encoded_text)
-        self.Linear_text2 = nn.Linear(encoded_text, encoded_text)
-        self.Linear_emo1 = nn.Linear(encoded_text,encoded_text)
+        self.Linear_text1 = nn.Linear(encoded_dim,encoded_dim)
+        self.Linear_text2 = nn.Linear(encoded_dim, encoded_dim)
+        self.Linear_emo1 = nn.Linear(encoded_dim,encoded_dim)
         ## Final layers
 
-        self.Final_emo = nn.Linear(encoded_text,n_emotion)
-        self.Final_text1 = nn.Linear(encoded_text,encoded_text)
-        self.Final_text2 = nn.Linear(encoded_text,n_vocab)
+        self.Final_text = nn.Linear(encoded_dim,n_vocab)
+        self.Final_emo1 = nn.Linear(encoded_dim,50)
+        self.Final_emo2 = nn.Linear(50,n_emotion)
+		
+		## extra
         self.dropout = nn.Dropout(0.2)
-    def forward(self,input_text,target_emotions=None):
+        self.device = device
+    def forward(self,input_text,input_emotion):
         ## input_text : [B, seq_len]
-        ## target_emotions: [B, seq_len] 
+        ## input_emotion: [B, seq_len] 
+       
+		## input channels: 
+        text = self.encoder_text(input_text).squeeze(-2) ## [B, seq_len, embed_dim]
+        text = self.Linear_text1(text)                   ## [B, seq_len, embed_dim]
+        text = self.dropout(text)      					 ## [B, seq_len, embed_dim]
+        text = F.relu(text)                              ## [B, seq_len, embed_dim]
         
-        text = self.encoder_text(input_text).squeeze(-2) # [B,seq_len, encoded_text]
-        text = self.Linear_text1(text)
-        text = self.dropout(text)
-        text = F.relu(text) ## [B,seq_len,encoded_text]
-        
-        text_out, _ = self.multi_head_attention1(text,text,text) ## self attentiln on the text [ B,seq_len, encoded_text]
-        text_out = self.Linear_text2(text_out) ## [B,seq_len,encoded_text]
-        
-        query = torch.zeros(text_out.size(0),1,dtype=torch.long)
-        emotion_out = []
-        for i in range(text_out.size(1)):
-            value = text_out
-            key = text_out
-            if target_emotions is not None:
-                query = target_emotions[:,i] ## [B,1]
+        emo = self.encoder_emo(input_emotion).squeeze(-2) ## [B, seq_len, embed_dim]
+        emo = self.Linear_emo1(emo)                       ## [B, seq_len, embed_dim]
+        emo = self.dropout(emo)							  ## [B, seq_len, embed_dim]
+        emo = F.relu(emo) 								  ## [B, seq_len, embed_dim]
+		
+		## self attention on text because...
+        # text_out, _ = self.multi_head_attention1(text,text,text)   ## [B, seq_len, embed_dim]
+        #text_out = self.Linear_text2(text_out) 					 ## [B, seq_len, embed_dim]
+        #text_out = self.dropout(text_out) 						     ## [B, seq_len, embed_dim]
+        #text_out = F.relu(text_out) 							     ## [B, seq_len, embed_dim]
 
-            query = self.encoder_emo(query) #[B, encoded_text]
-            emo, _ = self.multi_head_attention2(query,key,value) #[B,encoded_text]
-            
-            emo = self.Linear_emo1(emo)
-            emo = self.dropout(emo)
-            emo = F.relu(emo)
-            
-            query = torch.argmax(emo,2)
-            emotion_out.append(emo)
+		## fusion network
+        # fus, _ = self.multi_head_attention2(text_out, emo, emo) 								            ## [B, seq_len, embed_dim]
+        # mask = torch.triu(torch.full((text.size(1),text.size(1)),float('-inf')),diagonal=1).to(self.device) ## [B, seq_len, embed_dim]
+        fus, _ = self.multi_head_attention_masked(text, text, text) #, attn_mask=mask) 		                    ## [B, seq_len, embed_dim]
+		
+		## Final text layer
+        text_out = self.Final_text(fus)             ## [B,seq_len,n_vocab]
+        text_out = self.dropout(text_out) 			## [B,seq_len,n_vocab]
+        text_out = F.relu(text_out) 			 	## [B,seq_len,n_vocab]
+		## Final emotion layers
+        emo_out = self.Final_emo1(fus)            ## [B,seq_len,embed_dim]
+        emo_out = self.dropout(emo_out)           ## [B,seq_len,embed_dim]
+        emo_out = F.relu(emo_out) 				  ## [B,seq_len,embed_dim]
         
-        
-        emotion_out = torch.cat(emotion_out,dim=1)
-        emotion_out = self.Final_emo(emotion_out)
-        emotion_out = self.dropout(emotion_out)
-        emotion_out = F.relu(emotion_out)
-        
-        text_out = self.Final_text1(text_out)
-        text_out = self.dropout(text_out)
-        text_out = F.relu(text_out)
-
-        text_out = self.Final_text2(text_out)
-        text_out = self.dropout(text_out)
-        text_out = F.relu(text_out)
-        return emotion_out, text_out
+        emo_out = self.Final_emo2(emo_out)        ## [B,seq_len,n_emotion]
+        emo_out = self.dropout(emo_out)			  ## [B,seq_len,n_emotion]
+        emo_out = F.relu(emo_out) 				  ## [B,seq_len,n_emotion]
+		
+        return emo_out, text_out
         
 
 

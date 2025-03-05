@@ -13,15 +13,17 @@ from src.model import *
 from src.preprocess import * 
 from src.train import *
 from src.dataset import *
+
+
 ########################
 ### Global Variables ###
 ########################
 
 k = 50000
-SAVEPATH = "model/nn_hidden_model4.pth"
+SAVEPATH = "model/transf_model1.pth"
 SAVELOOKUP = "data/lookup.json"
 SAVESTOI = "data/stoi.json"
-LOADPATH = "model/nn_hidden_model3.pth"
+LOADPATH = "model/transf_model.pth"
 
 
 def emory():
@@ -53,7 +55,7 @@ def emory():
     test_dataset_emory = CustomedDataset(X_test_emory,Y_test_emory,X_test_target_emory,Y_test_target_emory) 
     val_dataset_emory = CustomedDataset(X_val_emory,Y_val_emory,X_val_target_emory,Y_val_target_emory) 
 
-    batch_size = 5
+    batch_size = 8
     train_loader_emory = DataLoader(train_dataset_emory,batch_size=batch_size,shuffle=True)
     test_loader_emory = DataLoader(test_dataset_emory,batch_size=batch_size,shuffle=True)
     val_loader_emory = DataLoader(val_dataset_emory,batch_size=batch_size,shuffle=True)
@@ -61,33 +63,39 @@ def emory():
     device = activate_gpu()
     n_vocab = len(stoi_emory)
     n_emotion = len(lookup_emory)
-    model = AttentionModel(pretrained_embeddings,300,50,n_vocab,n_emotion)
+    model = AttentionModel(pretrained_embeddings,300,50,n_vocab,n_emotion,device)
     
-    epochs = 50
-    losses = train(model,train_loader_emory,test_loader_emory,epochs,device,n_emotion)
-    uplook = {a:b for (b,a) in lookup_emory.keys()}
+    epochs = 20
+    
+    losses = train(model,train_loader_emory,test_loader_emory,epochs,device,n_emotion,n_vocab)
+    uplook = {a:b for (b,a) in lookup_emory.items()}
     trues, preds = inference(model,val_loader_emory,device)
-    #trues = [uplook[i] for i in trues]
-    #preds = [uplook[i] for i in preds]
+    trues, preds = remove_zeros(trues,preds)
     
+    trues = [uplook[i] for i in trues]
+    preds = [uplook[i] for i in preds]
+
     print(classification_report(trues, preds))
+    print(matthews_corrcoef(trues,preds))
     print(confusion_matrix(trues, preds))
     return 0
 
 
 ###### For DEBUG purposes ######
-def TEST_MODEL():
+def test_model():
+    print('aa')
     encoder_model = get_encoder()
     pretrained_embeddings, embeddings_vectors, stoi_emory, itos_emory = get_embeddings(encoder_model)
     device = activate_gpu()
     n_vocab = 20
-    n_emotions = 20
-    model = TransfModel(pretrained_embeddings,n_vocab,n_emotions,device)
+    n_emotion = 20  
+    print('b')
+    model = AttentionModel(pretrained_embeddings,300,50,n_vocab,n_emotion,device)
     model.eval()
     inp_text = torch.ones(4,199,1,dtype=torch.long)
     inp_emo = torch.ones(4,199,1,dtype=torch.long)
-    out = model.forward(inp_text,inp_emo)
-    out = torch.argmax(out,dim=1)
+    print('hereh')
+    out, other = model.forward(inp_text,inp_emo)
     print(out)
     print(out.size())
 
@@ -124,7 +132,7 @@ def test():
     print(Y_train_emory[:2])
     print(len(Y_train_emory[0]))
 
-# test_model()
+#test_model()
 emory()
 
 
