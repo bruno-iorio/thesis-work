@@ -1,0 +1,10 @@
+\contentsline {section}{\numberline {1}Introduction}{4}{section.1}%
+\contentsline {section}{\numberline {2}Related Work}{5}{section.2}%
+\contentsline {section}{\numberline {3}Datasets used}{5}{section.3}%
+\contentsline {section}{\numberline {4}Our Approach / Methodology (Absolutely going to change this title)}{5}{section.4}%
+\contentsline {section}{\numberline {5}Results}{5}{section.5}%
+\contentsline {section}{\numberline {6}Limitation of our approach}{5}{section.6}%
+\contentsline {section}{\numberline {7}Conclusion}{5}{section.7}%
+\contentsline {section}{\numberline {8}Perspectives}{5}{section.8}%
+\contentsline {section}{\numberline {9}References}{6}{section.9}%
+\contentsline {section}{\numberline {A}Appendix}{7}{appendix.A}%

@@ -141,7 +141,7 @@ tend to be much more viable for studying, particularly Within the field of Natur
 provides very significant information that can directly influence the emotion present in a text. In a dialogue, for example, emotions 
 in dialogues will depend heavely on the way that the dialogue progress.
 
-(INSERT DIAGRAM EXEMPLIFYING THE ABOVE)
+\textbf{(INSERT DIAGRAM EXEMPLIFYING THE ABOVE)}
 
 $$\vdots$$
 
@@ -159,14 +159,6 @@ Even from a human perspective, identifying emotions can be very difficult, espec
 as voice tone, gestures, facial expressions etc. Also, even the classification of emotions can be considered ambiguous sometimes.
 For instance, joyfulness, happiness, and love are generally considered similar, and sometimes only being distinguished in terms of
 intensity. This disambiguouity is what imposes the challenges in ERC, motivating many different approaches for this task. 
-
-Previous researches have extensively studied how different model architectures affect the performance in the ERC task. 
-DialogueRNN \cite{majumder2019dialoguernnattentivernnemotion} uses Gated Recurrent Networks (GRN) to infer a representation for 
-each emotion, while applying an attention mechanism to predict an emotion. ERC-DP \cite{wang2021t2vladgloballocalsequencealignment} 
-uses a BERT encoder, and introduces a personality state vector that incorporates information about the speaker itself for the 
-emotion prediction.
-
-
 
 $$\vdots$$
 
@@ -186,7 +178,7 @@ $$\vdots$$
 
 $$\vdots$$
 
-(ADD PICTURE DEPICTING EMOTION FLOW)
+\textbf{(ADD PICTURE DEPICTING EMOTION FLOW)}
 
 \section{Related Work} 
 Probably, the most challenging problem in this project is to find efficient ways to fuse the textual and emotional information. 
@@ -197,11 +189,43 @@ information using an attention layer. This is useful because the CEE is closely 
 improve the effeciency of ERC models \cite{LIU2025126924}. In 
 
 
-\section{Discussion (name subject to change)} % So we can discuss the limitiation of previous approaches 
 
 \section{Datasets used}
 
-\section{Our Approach / Methodology (Absolutely going to change this title)}
+Througout this project, we considered the following options of datasets:
+
+\textbf{DailyDialog: } \cite{li2017dailydialogmanuallylabelledmultiturn} Dataset containing 14,118 dialogues representing daily life dialogue situations. Each 
+utterance is classified with one of the following emotions: anger, disgust, fear, happiness, sadness, surprise or other(no emotion).
+
+\textbf{MELD: } \cite{poria2019meldmultimodalmultipartydataset} Dataset containing emotion anotation for over 1400 dialogues, and 13000 utterances, which were extract
+from the Friends TV show. It classifies each utterance as one of the following emotions: anger, disgust, fear, joy, neutral, sadness or surprise.
+
+\textbf{EmoryNLP: } \cite{zahiri2017emotiondetectiontvtranscripts} 12,606 utterances extracted from the Friends TV show. It classifies each utterance as one of the following
+emotions: joyful, peaceful, powerful, scared, mad or sad.
+
+After careful consideration, we decided to mainly focus on the EmoryNLP dataset. The reason for this is that EmoryNLP is considerably more balanced than the other two 
+datasets, even though having less content than the DailyDialog dataset. This extra variety is positive, because it allows models to learn better the difference between
+emotions.
+
+\textbf{Insert Diagram for DD, MELD, EmoryNLP}
+
+\section{Methodology}
+
+
+
+\subsection{Text preprocessing}
+
+
+
+\subsection{Emotion preprocessing}
+\subsection{Models}
+
+
+
+
+\section{Experimental Protocol}
+
+
 
 \section{Results}
 
