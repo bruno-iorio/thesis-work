@@ -6,3 +6,7 @@ all: main.tex main.bib *.tex
 
 clean:
 	rm -f *.aux *.bbl *.blg *.log *.toc *.dvi *.out *.tdo *.gx.table *.gx.gnuplot *.fdb_latexmk *.fls *~
+
+pdfclean: main.pdf 
+	rm main.pdf
+

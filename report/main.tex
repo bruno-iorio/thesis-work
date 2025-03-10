@@ -40,7 +40,16 @@
 \usepackage{pdfpages}
 \usepackage{fancyhdr} %% For changing headers and footers
 
+
 \usepackage{tikz}
+\usetikzlibrary{fit,positioning,hobby}
+\usetikzlibrary{decorations.text}
+\usetikzlibrary{decorations.pathreplacing}
+
+
+\usepackage{listings}
+\usepackage{hyperref}
+
 
 \usepackage{titling}
 \usepackage[nottoc,numbib]{tocbibind}
@@ -136,59 +145,71 @@
 %\pagenumbering{arabic}
 
 \section{Introduction}  % I am thinking of adding overview on the topic + Related work
+\subsection{Background}
+Emotions can be understood as the psicological state of an individual, which can be directly influenced by external factors.
+In human interactions, they serve as a natural response to these external agents, affecting communication, actions, speech tone, etc.
+Emotion Recognition (ER) deals with the problem of detecting emotions in speech, and this comes with the challenge of studying how 
+different factors -- such as context -- can shape emotions. Studying ER, therefore, provides us important information about the dynamics 
+in human communication.
 
-Emotions can be defined as one's psicological state, which can be caused by internal or external factors of an individual.
-While studying internal factors for the emotions, such as mental state and background, can be very difficult, external factors
-tend to be much more viable for studying, particularly Within the field of Natural Language Processing (NLP). The textual context 
-provides very significant information that can directly influence the emotion present in a text. In a dialogue, for example, emotions 
-in dialogues will depend heavely on the way that the dialogue progress.
+\begin{center}
+\includegraphics[width=0.8\textwidth]{img/dialogue_example/conversation}
+\end{center}
 
-\textbf{(INSERT DIAGRAM EXEMPLIFYING THE ABOVE)}
+Emotion Recognition in Conversation (ERC) is a growing field within NLP which tackles the task of identifying emotions in conversation. 
+The collection of emotional data through conversation provides a realistic, and rich source of information compared to isolated text examples.
+Having this information, and utilising it properly has become increasingly important in many different sectors. For instance, companies can 
+leverage ERC to measure customer's satisfaction, allowing a better perspective on how to improve their services.
 
-$$\vdots$$
+Restricting Emotion Recognition to text has he benefit of allowing us to maintain many important emotional agents, while keeping compact and 
+easy-to-process data. However, it eliminates factors that are strongly connected to emotions, such as voice tone, gestures, facial expressions 
+etc. This imposes strong limitations on emotion detection task, and limits the extend to which we can study emotions. Also, disambiguating 
+emotions becomes severely more complex: emotions that are already very nuanced -- such as joyfulness, hapiness, excitement etc -- become even 
+harder to be distinguished, when we surpress multiple emotional factors.
 
-$$\vdots$$
+In order to overcome these challanges, many resources were introduced in ERC. Recent research has been strongly focused on understanding the strong and 
+weak points of different architectures when applied to this task. DialogueRNN \cite{majumder2019dialoguernnattentivernnemotion}, leverages recursive and 
+attention mechanisms, to retrieve a "party state", for each of the parties in the conversation, which is later used to classify each emotion. 
+It compares how different recursive modules -- such as LSTMs, and GRUs -- in the same task. Task-Oriented Dialogue \cite{stricker2024unifiedapproachemotiondetection} 
+have been integrated with LLMs for ERC, by providing emotion recognition tasks for fine-tunned LLMs. This work, however, overlooks the fact that LLMs
+may are trained on many publicly available datasets, possibly including the ones their models were tested on.
 
-Emotion Recognition in Conversation (ERC) is a growing field within NLP which tackles the task of identifying 
-emotions in conversation. Its increasing importance is partially explained by its multiple applications in 
-different sectors of society. For example, the need of companies to understand and evaluate customer's 
-satisfaction, which allows them to offer better services, being more competitive in the market. Moreover, the 
-collection of this kind of data through a conversation framework allows us to capture emotions that are highly 
-dependent on textual context, speaker's profile, etc. This allows models to learn how subtleties in speach affect 
-emotions.
+\subsection{Task definition}
+An important factor influencing emotion is the Emotion Flow (EF), which can be defined as the graph describing the evolution of emotions 
+throughout a conversation. It allows us to add an extra depth into the emotion recognition task, and it can address many issues, such as 
+emoitonal disambiguating. Researchers believe that emotions have a certain resistance to change over time, a concepted known as Emotional inertia.
+It implies that previous emotions have a strong impact on future emotions, which strongly motivates us to study EF. To the best of our knowledge, 
+previous research has only studied Emotion Flow in an utterance level, by predicting emotions for each utterance. So, the question whether other 
+treatments to emotion prediction could be effective still remains to be answered. More especially, we raise the question whether a word level approach, 
+by predicting an emotion for each word in the conversation, could be effective.
 
-Even from a human perspective, identifying emotions can be very difficult, especially when we cannot rely on other factors such
-as voice tone, gestures, facial expressions etc. Also, even the classification of emotions can be considered ambiguous sometimes.
-For instance, joyfulness, happiness, and love are generally considered similar, and sometimes only being distinguished in terms of
-intensity. This disambiguouity is what imposes the challenges in ERC, motivating many different approaches for this task. 
+In this Project, we aim at evaluating how a word level approach can be combined with the Emotion Flow in the ERC task. Along with this, we also evaluate 
+how predicting tokens along with the emotions, in a word-level approach can affect the performance of the models.
 
-$$\vdots$$
+\begin{center}
+\includegraphics[width=0.8\textwidth]{img/dialogue_example/emotion_flow}
+\end{center}
 
-$$\vdots$$
+\subsection{Contributions}
+\textbf{complete this later}
+All the work presented in this report can be found \href{https://github.com/bruno-iorio/thesis-work}{here}.
 
-Among the factors that can influence emotion detection, we particularly study the Emotion Flow in the conversation, which can be
-denoted as the graph describing the evolution, or change, in emotion throughout the conversation. However, the use of the Emotion 
-Flow is limited to an utterance level. Which, while being a very logical way of studying emotions in conversation, has left some 
-space for how a word level approach would perform. This is, instead of predicting an emotion for each utterance, a word level approach 
-would predict an emotion for word. Indeed, to the extend of our research, there isn't any work evaluating the former approach in the 
-task of ERC, leaving us with some room to study it.
-
-In this Project, we aim at evaluating how a word level approach can be combined with the Emotion Flow in the ERC task. This comes with 
-the challenge of determining ways to fuse the information given by the Emotion Flow and the flow of words. 
-
-$$\vdots$$
-
-$$\vdots$$
-
-\textbf{(ADD PICTURE DEPICTING EMOTION FLOW)}
 
 \section{Related Work} 
-Probably, the most challenging problem in this project is to find efficient ways to fuse the textual and emotional information. 
-In \cite{LIU2025126924}, it is applied a window transformer - using narrow 2D window masks - to catch short-term inter-utterance relations, 
-used in the task of Causal Emotion Entailment(CEE), e.g. determining which parts of the text are causing each emotion. This was 
-particularly inspired from MPEG \cite{10252019}, where the emotional information is embeddeded and later on fused with the textual 
-information using an attention layer. This is useful because the CEE is closely related to ERC , and actually its use can actually 
-improve the effeciency of ERC models \cite{LIU2025126924}. In 
+Many interesting methods were previously used in ERC. In \cite{LIU2025126924}, it is applied a window transformer - using narrow
+2D window masks - to catch short-term inter-utterance relations, used in the task of Causal Emotion Entailment(CEE), e.g. determining
+which parts of the text are causing each emotion. This was particularly inspired from MPEG \cite{10252019}, where the emotional information 
+is embedded and later on fused with the textual information using an attention layer. This is useful because the CEE is closely related to ERC,
+and actually its use can actually improve the effeciency of ERC models \cite{LIU2025126924}. In \cite{wang-etal-2024-emotion}, the model 
+also predicts a personality profile vector for each individual participating in the conversation, by using BERT, with a multilayer perceptron.
+This is integrated with a fine-grained classification  module, that predicts an emotion for each utterance. In \cite{qin2023bertercfinetuningbertemotion}, they achieve
+good performance in the ERC task by applying prompting engeneering techniques, following with a fine-tunned BERT classifier. Comparatively, it 
+is a very simple approach to this problem.
+
+Many of the previous works provide us ways of fusing the emotion information with the textual information, while not overcomplexifying the overall 
+archtectures of the models. However, they don't address different approaches for the treatment of the Emotion Flow, specially how a word-level approach
+would perform.
+
 
 
 
@@ -213,20 +234,66 @@ emotions.
 
 \section{Methodology}
 
-\input{img/model_diagrams/simple_model}
 
 \subsection{Text preprocessing}
-
-
+We used a classic tokenization approach. For each conversation $C$ in the dataset, we applied the tokenizer for each utternation $utt_k$, getting a list of tokens
+$[tok_{1,1},tok_{1,2},\cdots, tok_{1,k_1}]$. After, we proceeded to concanate in order each of the tokenized utterances, getting  $[tok_1,tok_2, \cdots, tok_m]$,
+where $m$ is the maximum number of words per conversation, set default to $200$.
+  $$
+  C = [utt_1, \cdots, utt_n] \to \\
+  $$
+  $$
+  [[tok_{1,1},tok_{1,2},\cdots, tok_{1,k_1}], \cdots , [tok_{n,1},\cdots,tok_{n,k_n}]] \to \\
+  $$
+  $$
+  [tok_1,tok_2, \cdots, tok_m]  \\
+$$
 
 \subsection{Emotion preprocessing}
 \subsection{Models}
 
+\textbf{Simple Recursive Model:}
+\input{img/model_diagrams/simple_model2}
+This model integrates contextual information, by using a recursive hidden state. To fuse the textual information with the emotional information,
+we use a very simple concatatenation followed by a linear layer.
+
+\begin{itemize}
+  \item \textbf{Input token} ($t_n$)
+  \item \textbf{Output token }($t_{n+1}$)
+  \item \textbf{Input emotion }($e_n$)
+  \item \textbf{Output emotion }($e_{n+1}$)
+  \item \textbf{n-th Hidden state } ($h_n$)
+  \item \textbf{Fusion layer output }($f_n$)
+    
+
+\end{itemize}
+
+We first encode the text using pretrained Fasttext embeddings, and we encode the emotions with trainable embeddings.
+\begin{align*}
+  t_n &\leftarrow \text{Embedding}_{text}(t_n) \\
+  e_n &\leftarrow \text{Embedding}_{emotion}(e_n) \\
+\end{align*}
+Then, we forward both in Fully Connected (FC) layers. and we use it to update the hidden state, by summing them up, and we concatenate them into a fusion layer.
+
+\begin{align*}
+  f_n &\leftarrow \text{concat}(FC_1(t_n),FC_2(e_n)) \\
+  h_{n+1} &\leftarrow \tanh{FC(t_n + e_n)}\\
+\end{align*}
+
+We then finally predict the next token $t_{n+1}$ by concatenating $f_n$, $t_n$, and $h_{n+1}$, and passing them through an Multi-Layer Perceptron (MLP) with ReLU.
+To predict the next emotion we concatenate $f_n$ and $t_n$, and then we pass them through a MLP with ReLU
+\begin{align*}
+  t_{n+1} &\leftarrow ReLU(MLP(\text{concat}(f_n,h_{n+1},t_n))) \\
+  e_{n+1} &\leftarrow ReLU(MLP(\text{concat}(f_n,t_n))) \\
+\end{align*}
+
+
+
+\input{img/model_diagrams/attention_model}
 
 
 
 \section{Experimental Protocol}
-
 
 
 \section{Results}
