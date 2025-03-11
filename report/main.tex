@@ -12,7 +12,7 @@
   especially within NLP. In the scope of Emotion Recognition, identifying emotions in dialogues plays an essential role. This is because 
   most of the emotional text data collection happens in the context of a conversation between two or more parties (e.g. customer service survey).
   In this paper we discuss the limitation of previous approches to the ERC task, while also evaluating an original approach
-  to the same problem using Causal learning, which we identify as the Emotion Flow and attention mechanisms. (initial version)
+  to the same problem using Causal learning, which we identify as the Emotion Flow and attention mechanisms. \textbf{(initial version)}
 }
 
 \usepackage[
@@ -146,20 +146,24 @@
 
 \section{Introduction}  % I am thinking of adding overview on the topic + Related work
 \subsection{Background}
+
 Emotions can be understood as the psicological state of an individual, which can be directly influenced by external factors.
 In human interactions, they serve as a natural response to these external agents, affecting communication, actions, speech tone, etc.
 Emotion Recognition (ER) deals with the problem of detecting emotions in speech, and this comes with the challenge of studying how 
 different factors -- such as context -- can shape emotions. Studying ER, therefore, provides us important information about the dynamics 
 in human communication.
 
-\begin{center}
-\includegraphics[width=0.8\textwidth]{img/dialogue_example/conversation}
-\end{center}
-
 Emotion Recognition in Conversation (ERC) is a growing field within NLP which tackles the task of identifying emotions in conversation. 
 The collection of emotional data through conversation provides a realistic, and rich source of information compared to isolated text examples.
 Having this information, and utilising it properly has become increasingly important in many different sectors. For instance, companies can 
 leverage ERC to measure customer's satisfaction, allowing a better perspective on how to improve their services.
+
+\begin{figure}[ht]
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{img/dialogue_example/conversation}
+    \caption{Emotion Recognition example in coversation.}
+  \end{center}
+\end{figure}
 
 Restricting Emotion Recognition to text has he benefit of allowing us to maintain many important emotional agents, while keeping compact and 
 easy-to-process data. However, it eliminates factors that are strongly connected to emotions, such as voice tone, gestures, facial expressions 
@@ -186,9 +190,12 @@ by predicting an emotion for each word in the conversation, could be effective.
 In this Project, we aim at evaluating how a word level approach can be combined with the Emotion Flow in the ERC task. Along with this, we also evaluate 
 how predicting tokens along with the emotions, in a word-level approach can affect the performance of the models.
 
-\begin{center}
-\includegraphics[width=0.8\textwidth]{img/dialogue_example/emotion_flow}
-\end{center}
+\begin{figure}[ht]
+  \begin{center}
+    \includegraphics[width=0.9\textwidth]{img/dialogue_example/emotion_flow}
+    \caption{Utterance-level emotion flow vs. Word-level emotion flow}
+  \end{center}
+\end{figure}
 
 \subsection{Contributions}
 \textbf{complete this later}
@@ -237,35 +244,37 @@ emotions.
 
 \subsection{Text preprocessing}
 We used a classic tokenization approach. For each conversation $C$ in the dataset, we applied the tokenizer for each utternation $utt_k$, getting a list of tokens
-$[tok_{1,1},tok_{1,2},\cdots, tok_{1,k_1}]$. After, we proceeded to concanate in order each of the tokenized utterances, getting  $[tok_1,tok_2, \cdots, tok_m]$,
+$[tok_{k,1},tok_{k,2},\cdots, tok_{k,m_k}]$. After, we proceeded to concanate in order each of the tokenized utterances, getting  $[tok_1,tok_2, \cdots, tok_m]$,
 where $m$ is the maximum number of words per conversation, set default to $200$.
-  $$
-  C = [utt_1, \cdots, utt_n] \to \\
-  $$
-  $$
-  [[tok_{1,1},tok_{1,2},\cdots, tok_{1,k_1}], \cdots , [tok_{n,1},\cdots,tok_{n,k_n}]] \to \\
-  $$
-  $$
-  [tok_1,tok_2, \cdots, tok_m]  \\
-$$
+\begin{align*}
+  C = \;&[utt_1, \cdots, utt_n] \to \\
+      &[[tok_{1,1},tok_{1,2},\cdots, tok_{1,k_1}], \cdots , [tok_{n,1},\cdots,tok_{n,k_n}]] \to \\
+      &[tok_1,tok_2, \cdots, tok_m]  \\
+\end{align*}
+In between different utterances we added a separation token \texttt{<sep>}, to indicate that a sentence has ended and another one has started. Similarly, we added
+a padding token \texttt{<pad>}, so that, if the length of the conversation is smaller than $m$ tokens, we pad $C$ until it reaches $m$ tokens. Both these additions 
+help us patternizing the data, and addding more information for the training process.
+
 
 \subsection{Emotion preprocessing}
+\newpage
 \subsection{Models}
 
-\textbf{Simple Recursive Model:}
+\begin{center}
+  \textbf{Simple Recursive Model}
+\end{center}
+
 \input{img/model_diagrams/simple_model2}
 This model integrates contextual information, by using a recursive hidden state. To fuse the textual information with the emotional information,
 we use a very simple concatatenation followed by a linear layer.
 
 \begin{itemize}
   \item \textbf{Input token} ($t_n$)
-  \item \textbf{Output token }($t_{n+1}$)
   \item \textbf{Input emotion }($e_n$)
+  \item \textbf{Output token }($t_{n+1}$)
   \item \textbf{Output emotion }($e_{n+1}$)
-  \item \textbf{n-th Hidden state } ($h_n$)
+  \item \textbf{Hidden state } ($h_n$)
   \item \textbf{Fusion layer output }($f_n$)
-    
-
 \end{itemize}
 
 We first encode the text using pretrained Fasttext embeddings, and we encode the emotions with trainable embeddings.
@@ -276,27 +285,79 @@ We first encode the text using pretrained Fasttext embeddings, and we encode the
 Then, we forward both in Fully Connected (FC) layers. and we use it to update the hidden state, by summing them up, and we concatenate them into a fusion layer.
 
 \begin{align*}
-  f_n &\leftarrow \text{concat}(FC_1(t_n),FC_2(e_n)) \\
-  h_{n+1} &\leftarrow \tanh{FC(t_n + e_n)}\\
+  f_n &\leftarrow \text{Concat}(\text{FC}(t_n),\text{FC}(e_n)) \\
+h_{n+1} &\leftarrow \text{Tanh}(\text{FC}(t_n + e_n))\\
 \end{align*}
 
 We then finally predict the next token $t_{n+1}$ by concatenating $f_n$, $t_n$, and $h_{n+1}$, and passing them through an Multi-Layer Perceptron (MLP) with ReLU.
 To predict the next emotion we concatenate $f_n$ and $t_n$, and then we pass them through a MLP with ReLU
+
 \begin{align*}
-  t_{n+1} &\leftarrow ReLU(MLP(\text{concat}(f_n,h_{n+1},t_n))) \\
-  e_{n+1} &\leftarrow ReLU(MLP(\text{concat}(f_n,t_n))) \\
+  t_{n+1} &\leftarrow \text{ReLU}(\text{MLP}(\text{concat}(f_n,h_{n+1},t_n))) \\
+  e_{n+1} &\leftarrow \text{ReLU}(\text{MLP}(\text{concat}(f_n,t_n))) \\
 \end{align*}
 
+\begin{center}
+  \textbf{Attention Model}
 
-
+\begin{figure}[ht]
 \input{img/model_diagrams/attention_model}
+\caption{Attention model diagram}
+\end{figure}
+
+\end{center}
+This model uses an multi-headed attention mechanism in the fusion layer for the emotions with the text embeddings. This idea was inspired from \cite{LIU2025126924}.
+
+\begin{itemize}
+  \item \textbf{Input tokens} ($(t_k)_{1 \leq k \leq n}$)
+  \item \textbf{Input emotions }($(e_k)_{1 \leq k \leq n}$)
+  \item \textbf{Output token }($t_{n+1}$)
+  \item \textbf{Output emotion }($e_{n+1}$)
+  \item \textbf{Fusion layer output }($f_n$)
+\end{itemize}
+
+Firstly, each of the tokens $t_k$ is sent through a pretrained embedding layer, and each emotion $e_k$ is sent through a trainable embedding layer.
+
+\begin{align*}
+  t_k &\leftarrow \text{Embedding}_{text}(t_k) \\
+  e_k &\leftarrow \text{Embedding}_{emotion}(e_k) \\
+\end{align*}
+
+We forward them into FC layers, use the results as input for the attention layer.
+
+\begin{align*}
+  t_k &\leftarrow \text{FC}(t_k) \\
+  e_k &\leftarrow \text{FC}(e_k) \\
+  f_n &\leftarrow \text{Attn}((t_k)_{1\leq k\leq n},(e_k)_{1\leq k\leq n},(e_k)_{1\leq k\leq n}) \\
+\end{align*}
+
+We finally compute the text and emotion output by simply forwarding $f_n$ through MLP layers followed by ReLU activation.
+
+\begin{align*}
+  t_{n+1} &\leftarrow \text{ReLU}(\text{MLP}(f_n)) \\
+  e_{n+1} &\leftarrow \text{ReLU}(\text{MLP}(f_n)) \\
+\end{align*}
 
 
 
 \section{Experimental Protocol}
 
+To run our experiments, we split the data into three: training data, test data, and validation data. The training data is used to train the 
+model we will use. The test data set will be used to evaulate the training of each of the models (e.g. compute the metrics after each training
+epoch). The validation set will be used to evaluate the final performance of the model.
+
+The metrics we used are f1-score, and mcc score.
 
 \section{Results}
+\begin{figure}[ht]
+  \begin{center}
+  \input{img/results/results_table}
+  \caption{f1-score and mcc evaluation for each of the models}
+\end{center}
+\end{figure}
+
+
+
 
 \section{Limitation of our approach}
 
@@ -313,7 +374,7 @@ To predict the next emotion we concatenate $f_n$ and $t_n$, and then we pass the
 \appendix
 
 \section{Appendix}
-\label{sec:appendix}
+\label{appendix}
 
 \end{document}
 ;

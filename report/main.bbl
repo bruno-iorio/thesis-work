@@ -1,0 +1,79 @@
+\begin{thebibliography}{10}
+
+\bibitem{10252019}
+Tiantian Chen, Ying Shen, Xuri Chen, Lin Zhang, and Shengjie Zhao.
+\newblock Mpeg: A multi-perspective enhanced graph attention network for causal
+  emotion entailment in conversations.
+\newblock {\em IEEE Transactions on Affective Computing}, 15(3):1004--1017,
+  2024.
+
+\bibitem{Li_2024}
+Jiang Li, Xiaoping Wang, and Zhigang Zeng.
+\newblock A dual-stream recurrence-attention network with global–local
+  awareness for emotion recognition in textual dialog.
+\newblock {\em Engineering Applications of Artificial Intelligence},
+  128:107530, February 2024.
+
+\bibitem{li2017dailydialogmanuallylabelledmultiturn}
+Yanran Li, Hui Su, Xiaoyu Shen, Wenjie Li, Ziqiang Cao, and Shuzi Niu.
+\newblock Dailydialog: A manually labelled multi-turn dialogue dataset, 2017.
+
+\bibitem{LIU2025126924}
+Hao Liu, Runguo Wei, Geng Tu, Jiali Lin, Dazhi Jiang, and Erik Cambria.
+\newblock Knowing what and why: Causal emotion entailment for emotion
+  recognition in conversations.
+\newblock {\em Expert Systems with Applications}, 274:126924, 2025.
+
+\bibitem{majumder2019dialoguernnattentivernnemotion}
+Navonil Majumder, Soujanya Poria, Devamanyu Hazarika, Rada Mihalcea, Alexander
+  Gelbukh, and Erik Cambria.
+\newblock Dialoguernn: An attentive rnn for emotion detection in conversations,
+  2019.
+
+\bibitem{meng2024maskedgraphlearningrecurrent}
+Tao Meng, Fuchen Zhang, Yuntao Shou, Hongen Shao, Wei Ai, and Keqin Li.
+\newblock Masked graph learning with recurrent alignment for multimodal emotion
+  recognition in conversation, 2024.
+
+\bibitem{pereira2024deepemotionrecognitiontextual}
+Patrícia Pereira, Helena Moniz, and Joao~Paulo Carvalho.
+\newblock Deep emotion recognition in textual conversations: A survey, 2024.
+
+\bibitem{poria2019meldmultimodalmultipartydataset}
+Soujanya Poria, Devamanyu Hazarika, Navonil Majumder, Gautam Naik, Erik
+  Cambria, and Rada Mihalcea.
+\newblock Meld: A multimodal multi-party dataset for emotion recognition in
+  conversations, 2019.
+
+\bibitem{qin2023bertercfinetuningbertemotion}
+Xiangyu Qin, Zhiyu Wu, Jinshi Cui, Tingting Zhang, Yanran Li, Jian Luan, Bin
+  Wang, and Li~Wang.
+\newblock Bert-erc: Fine-tuning bert is enough for emotion recognition in
+  conversation, 2023.
+
+\bibitem{stricker2024unifiedapproachemotiondetection}
+Armand Stricker and Patrick Paroubek.
+\newblock A unified approach to emotion detection and task-oriented dialogue
+  modeling, 2024.
+
+\bibitem{wang2021t2vladgloballocalsequencealignment}
+Xiaohan Wang, Linchao Zhu, and Yi~Yang.
+\newblock T2vlad: Global-local sequence alignment for text-video retrieval,
+  2021.
+
+\bibitem{wang-etal-2024-emotion}
+Yan Wang, Bo~Wang, Yachao Zhao, Dongming Zhao, Xiaojia Jin, Jijun Zhang,
+  Ruifang He, and Yuexian Hou.
+\newblock Emotion recognition in conversation via dynamic personality.
+\newblock In Nicoletta Calzolari, Min-Yen Kan, Veronique Hoste, Alessandro
+  Lenci, Sakriani Sakti, and Nianwen Xue, editors, {\em Proceedings of the 2024
+  Joint International Conference on Computational Linguistics, Language
+  Resources and Evaluation (LREC-COLING 2024)}, pages 5711--5722, Torino,
+  Italia, May 2024. ELRA and ICCL.
+
+\bibitem{zahiri2017emotiondetectiontvtranscripts}
+Sayyed~M. Zahiri and Jinho~D. Choi.
+\newblock Emotion detection on tv show transcripts with sequence-based
+  convolutional neural networks, 2017.
+
+\end{thebibliography}

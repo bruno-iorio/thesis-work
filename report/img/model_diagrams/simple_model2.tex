@@ -9,9 +9,9 @@
             every node/.style={align=center,font=\tiny}
     ]
         % Input Layer
-        \node[input neuron] (inp_e) at (0,2) {$e_n$};
-        \node[input neuron] (inp_t) at (0,0) {$t_n$};
-        \node[input neuron] (inp_h) at (0,-2) {$h_n$};
+        \node[input neuron] (inp_e) at (0.5,2) {$e_n$};
+        \node[input neuron] (inp_t) at (0.5,0) {$t_n$};
+        \node[input neuron] (inp_h) at (0.5,-2) {$h_n$};
         
         % Text Processing
         \node[embeddings neuron] (emb_e) at (2,2) {Embedding Layer};
@@ -22,24 +22,24 @@
         \node[mlp neuron] (MLP1_txt) at (4,0) {FC};
 
         % Hidden Update
-        \node[input neuron, minimum size=0.7cm] (hidden_upd1) at (5.5,-1) {+};
+        \node[input neuron, minimum size=0.7cm,fill=white!30] (hidden_upd1) at (5.5,-1) {+};
         \node[mlp neuron] (hidden_upd2) at (7,-1) {Tanh};
         
         % Fusion
-        \node[input neuron] (concat1) at (5.5,1) {Concat};
+        \node[input neuron,fill=white!30] (concat1) at (5.5,1) {Concat};
         \node[mlp neuron] (mlp_fus) at (7,1) {FC};
 
         % Final Emotion
-        \node[input neuron] (concat2) at (9,2) {Concat};
-        \node[mlp neuron] (MLP2_emo) at (11,2) {MLP + ReLU};
+        \node[input neuron,fill=white!30] (concat2) at (8,2) {Concat};
+        \node[mlp neuron] (MLP2_emo) at (9.5,2) {MLP + ReLU};
 
         % Final Text
-        \node[input neuron] (concat3) at (9,0) {Concat};
-        \node[mlp neuron] (MLP2_txt) at (11,0) {MLP + ReLU};
+        \node[input neuron,fill=white!30] (concat3) at (8,0) {Concat};
+        \node[mlp neuron] (MLP2_txt) at (9.5,0) {MLP + ReLU};
 
-        \node[input neuron] (out_emo) at (12.5,2) {$e_{n+1}$};
-        \node[input neuron] (out_txt) at (12.5,0) {$t_{n+1}$};
-        \node[input neuron] (out_hidden) at (12.5,-2) {$h_{n+1}$};
+        \node[input neuron] (out_emo) at (11,2) {$e_{n+1}$};
+        \node[input neuron] (out_txt) at (11,0) {$t_{n+1}$};
+        \node[input neuron] (out_hidden) at (11,-2) {$h_{n+1}$};
 
         % Arrows
         \draw[->] (inp_t) -- (emb_t);

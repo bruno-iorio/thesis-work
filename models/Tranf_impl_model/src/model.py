@@ -27,8 +27,8 @@ class AttentionModel(nn.Module):
         self.multi_head_attention_masked = nn.MultiheadAttention(embed_dim=encoded_dim,num_heads=20,dropout = 0.2, batch_first=True)
         
         self.encoder_emo = nn.Embedding(n_emotion,encoded_dim)
-        #self.encoder_text = nn.Embedding.from_pretrained(embeddings, freeze=True)
-        self.encoder_text = nn.Embedding(n_vocab,encoded_dim)
+        self.encoder_text = nn.Embedding.from_pretrained(embeddings, freeze=True)
+        #self.encoder_text = nn.Embedding(n_vocab,encoded_dim)
         
 
         self.Linear_text1 = nn.Linear(encoded_dim,encoded_dim)
@@ -37,8 +37,8 @@ class AttentionModel(nn.Module):
         ## Final layers
 
         self.Final_text = nn.Linear(encoded_dim,n_vocab)
-        self.Final_emo1 = nn.Linear(encoded_dim,50)
-        self.Final_emo2 = nn.Linear(50,n_emotion)
+        self.Final_emo1 = nn.Linear(encoded_dim,encoded_dim)
+        self.Final_emo2 = nn.Linear(encoded_dim,n_emotion)
 		
 		## extra
         self.dropout = nn.Dropout(0.2)
@@ -59,7 +59,7 @@ class AttentionModel(nn.Module):
         emo = F.relu(emo) 								  ## [B, seq_len, embed_dim]
 		
 		## self attention on text because...
-        # text_out, _ = self.multi_head_attention1(text,text,text)   ## [B, seq_len, embed_dim]
+        #text_out, _ = self.multi_head_attention1(text,text,text)    ## [B, seq_len, embed_dim]
         #text_out = self.Linear_text2(text_out) 					 ## [B, seq_len, embed_dim]
         #text_out = self.dropout(text_out) 						     ## [B, seq_len, embed_dim]
         #text_out = F.relu(text_out) 							     ## [B, seq_len, embed_dim]
@@ -77,14 +77,15 @@ class AttentionModel(nn.Module):
         emo_out = self.Final_emo1(fus)            ## [B,seq_len,embed_dim]
         emo_out = self.dropout(emo_out)           ## [B,seq_len,embed_dim]
         emo_out = F.relu(emo_out) 				  ## [B,seq_len,embed_dim]
-        
-        emo_out = self.Final_emo2(emo_out)        ## [B,seq_len,n_emotion]
-        emo_out = self.dropout(emo_out)			  ## [B,seq_len,n_emotion]
-        emo_out = F.relu(emo_out) 				  ## [B,seq_len,n_emotion]
+        emo_out, _ = self.multi_head_attention2(emo_out, emo, emo)
+
+        emo_out = self.Final_emo2(emo_out)        ## [B,seq_len, n_emotion]
+        emo_out = self.dropout(emo_out)			  ## [B,seq_len, n_emotion]
+        emo_out = F.relu(emo_out) 				  ## [B,seq_len, n_emotion]
 		
         return emo_out, text_out
         
-
+ 
 
 def load_model(path,embeddings,device, n_emotions, n_vocab):
     model = TransfModel(embeddings,n_vocab,n_emotions,device)

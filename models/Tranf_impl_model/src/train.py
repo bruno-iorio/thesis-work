@@ -95,7 +95,7 @@ def train_batch(model,optimizer,batch,device,weights_emo=None,weights_text=None)
     loss_emo = lossfn_emo(pred_emotions,target_emotions)
     loss_text = lossfn_text(pred_text,target_texts)
     loss = loss_emo*0.9 + loss_text*0.1
-    loss_emo.backward()
+    loss.backward()
     optimizer.step()
     return loss_emo.mean().item()
 

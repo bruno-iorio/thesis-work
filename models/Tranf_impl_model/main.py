@@ -65,7 +65,7 @@ def emory():
     n_emotion = len(lookup_emory)
     model = AttentionModel(pretrained_embeddings,300,50,n_vocab,n_emotion,device)
     
-    epochs = 70
+    epochs = 50
     
     losses = train(model,train_loader_emory,test_loader_emory,epochs,device,n_emotion,n_vocab)
     uplook = {a:b for (b,a) in lookup_emory.items()}
